@@ -1,8 +1,12 @@
 from flask import Flask
 from flask import jsonify
-app = Flask(__name__)
+from flask_cors import CORS, cross_origin
 
-@app.route('/histogram')
+app = Flask(__name__)
+CORS(app)
+
+@app.route('/histogram', methods=["GET"])
+@cross_origin()
 def hello():
     data = [
         ['Dinosaur', 'Length'],
@@ -34,9 +38,6 @@ def hello():
         ['Tyrannosaurus (tyrant lizard)', 15.2],
         ['Ultrasaurus (ultra lizard)', 30.5],
         ['Velociraptor (swift robber)', 1.8]]
-
-
-
     return jsonify(data)
 
 

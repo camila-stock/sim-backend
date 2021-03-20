@@ -28,6 +28,11 @@ https://dev.to/sahilrajput/install-flask-and-create-your-first-web-application-2
    ```
   sudo pip3 install Flask
   ```
+  
+- Instalar CORS
+    ```
+  pip install -U flask-cors
+  ```
  
 - Para correr el proyecto
     ```
