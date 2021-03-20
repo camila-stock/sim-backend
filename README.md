@@ -26,7 +26,7 @@ https://dev.to/sahilrajput/install-flask-and-create-your-first-web-application-2
 
 - Instalar Flask 
    ```
-  pip install Flask
+  sudo pip3 install Flask
   ```
  
 - Para correr el proyecto
