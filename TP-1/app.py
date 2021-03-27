@@ -3,6 +3,7 @@ from flask import jsonify
 from flask_cors import CORS, cross_origin
 from flask import request
 import congruencial_lineal as cl  
+import congruencial_multiplicativo as cm  
 app = Flask(__name__)
 CORS(app)
 
@@ -53,6 +54,18 @@ def asd():
     intervalos = int(request.args.get('intervalos'))
     data = cl.linearMethod(n,x,k,c,g, intervalos)
     return jsonify(data)
+
+@app.route('/congruencial-multiplicativo', methods=["GET"])
+@cross_origin()
+def asd2():
+    n = int(request.args.get('n'))
+    x = int(request.args.get('x'))
+    k = int(request.args.get('k'))
+    g = int(request.args.get('g'))
+    intervalos = int(request.args.get('intervalos'))
+    data = cm.multiplicativeMethod(n,x,k,g, intervalos)
+    return jsonify(data)
+
 
 
 if __name__ == '__main__':
