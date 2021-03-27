@@ -4,6 +4,7 @@ from flask_cors import CORS, cross_origin
 from flask import request
 import congruencial_lineal as cl  
 import congruencial_multiplicativo as cm  
+import full_random as fr  
 app = Flask(__name__)
 CORS(app)
 
@@ -45,7 +46,7 @@ def hello():
 
 @app.route('/congruencial-lineal', methods=["GET"])
 @cross_origin()
-def asd():
+def getLinear():
     n = int(request.args.get('n'))
     x = int(request.args.get('x'))
     k = int(request.args.get('k'))
@@ -57,13 +58,21 @@ def asd():
 
 @app.route('/congruencial-multiplicativo', methods=["GET"])
 @cross_origin()
-def asd2():
+def getMultiplicative():
     n = int(request.args.get('n'))
     x = int(request.args.get('x'))
     k = int(request.args.get('k'))
     g = int(request.args.get('g'))
     intervalos = int(request.args.get('intervalos'))
     data = cm.multiplicativeMethod(n,x,k,g, intervalos)
+    return jsonify(data)
+
+@app.route('/full-random', methods=["GET"])
+@cross_origin()
+def getRandom():
+    n = int(request.args.get('n'))
+    intervalos = int(request.args.get('intervalos'))
+    data = fr.fullRandomMethod(n, intervalos)
     return jsonify(data)
 
 

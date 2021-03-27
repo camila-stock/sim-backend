@@ -4,7 +4,6 @@ import json
 def linearMethod(n, x, k, c, g, intervalos):
     a = 1 + 4 * k
     m = pow(2, g)
-    print(n,x,k,c,g, a, m)
     lista_valores = []
     tam_interval = 0.9999 / intervalos
     cota_sup = 0
@@ -14,7 +13,6 @@ def linearMethod(n, x, k, c, g, intervalos):
         intervalo = Intervalo(i,cota_sup)
         res.append(intervalo)
 
-    print(res[0].cota_superior)
     for i in range(0,n):
         x = ((a * x + c) % m)
         ran = Decimal(x) / Decimal(m - 1)

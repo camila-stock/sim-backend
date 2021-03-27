@@ -1,10 +1,8 @@
 from decimal import Decimal, ROUND_HALF_UP
+import math
 import json
-
-def multiplicativeMethod(n, x, k, g, intervalos):
-    a = 3 + 8 * k
-    m = pow(2, g)
-    lista_valores = []
+import random
+def fullRandomMethod(n, intervalos):
     tam_interval = 0.9999 / intervalos
     cota_sup = 0
     res = []
@@ -14,10 +12,9 @@ def multiplicativeMethod(n, x, k, g, intervalos):
         res.append(intervalo)
 
     for i in range(0,n):
-        x = ((a * x ) % m)
-        ran = Decimal(x) / Decimal(m - 1)
+        x = random.uniform(0, 1)
 
-        output = Decimal(Decimal(ran).quantize(Decimal('.0001'), rounding=ROUND_HALF_UP))
+        output = Decimal(Decimal(x).quantize(Decimal('.0001'), rounding=ROUND_HALF_UP))
         for item in range(0, len(res)):
             if output <= res[item].cota_superior:
                 res[item].frecuencia += 1
