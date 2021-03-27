@@ -1,7 +1,8 @@
 from flask import Flask
 from flask import jsonify
 from flask_cors import CORS, cross_origin
-
+from flask import request
+import congruencial_lineal as cl  
 app = Flask(__name__)
 CORS(app)
 
@@ -38,6 +39,19 @@ def hello():
         ['Tyrannosaurus (tyrant lizard)', 15.2],
         ['Ultrasaurus (ultra lizard)', 30.5],
         ['Velociraptor (swift robber)', 1.8]]
+    return jsonify(data)
+
+
+@app.route('/congruencial-lineal', methods=["GET"])
+@cross_origin()
+def asd():
+    n = int(request.args.get('n'))
+    x = int(request.args.get('x'))
+    k = int(request.args.get('k'))
+    g = int(request.args.get('g'))
+    c = int(request.args.get('c'))
+    intervalos = int(request.args.get('intervalos'))
+    data = cl.linearMethod(n,x,k,c,g, intervalos)
     return jsonify(data)
 
 
