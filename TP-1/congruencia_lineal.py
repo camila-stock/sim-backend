@@ -1,43 +1,58 @@
 from decimal import Decimal, ROUND_HALF_UP
 
-
 def linearMethod(x, k, c, g):
-    periodo = 1
+    periodo = 0
     bandera = 0
     a = 1 + 4 * k
-    mod = pow(2, g)
+    m = pow(2, g)
 
-    lista_intervalos = []
+    lista_intervalos = [0]
+    lista_valores = []
     count_intervalo = 10
 
-    tam_intervalo = Decimal(periodo) / Decimal(count_intervalo)
+    tam_intervalo = Decimal(0.9999) / Decimal(count_intervalo)
+    lugar_intervalo = tam_intervalo
     print("tam_intervalo: {0}".format(tam_intervalo))
 
-    lista_intervalos.append(0)
+    lista_intervalos.append(tam_intervalo)
 
-    print("Range: {0}".format(range(0, periodo)))
-    for i in range(0, periodo):
+    while (bandera != x):
+        if (periodo == 0):
+            bandera = x
+        x = ((a * x + c) % m)
+        ran = Decimal(x) / Decimal(m - 1)
+
+        output = Decimal(Decimal(ran).quantize(Decimal('.0001'), rounding=ROUND_HALF_UP))
+        print(output)
+        lista_valores.append(output)
+        lugar_intervalo = tam_intervalo + lugar_intervalo
+        lista_intervalos.append(lugar_intervalo)
+        periodo = periodo + 1
+
+    count_valor_x_intervalo = []
+
+
+     for i in range(len(M)):
+     print '[',
+     for j in range(len(M[i])):
+     print '{:>3s}'.format(str(M[i][j])),
+     print ']'
+
+    print("Range: {0}".format(range(1, periodo)))
+    for i in range(1, periodo):
         print("valor de i: {0}".format(i))
-        valor_anterior = lista_intervalos[i]
+        for j in lista_intervalos
+            if (lista_valores[i-1] < lista_intervalos[j])
+
         print("valor anterior: {0}".format(valor_anterior))
         print("tam_intervalo: {0}".format(tam_intervalo))
         aux = valor_anterior + tam_intervalo
         print("Valor anterior + intrevalo: {0}".format(aux))
         lista_intervalos.append(aux)
 
-
     print("### Lista de intervalos: {0}".format(lista_intervalos))
-    while (bandera != x):
-        if (periodo == 0):
-            bandera = x
-        x = ((a * x + c) % mod)
-        ran = Decimal(x) / Decimal(mod - 1)
 
-        output = Decimal(Decimal(ran).quantize(Decimal('.0001'), rounding=ROUND_HALF_UP))
-        print(output)
-        periodo = periodo + 1
-
-#    if(periodo == mod):
+#    if(periodo == m):
 #        print("El periodo es completo: ", periodo)
 #    else:
 #        print("El periodo es incompleto:", periodo)
