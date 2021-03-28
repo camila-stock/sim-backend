@@ -1,6 +1,5 @@
 from decimal import Decimal, ROUND_HALF_UP
 import math
-import json
 import random
 def fullRandomMethod(n, intervalos):
     tam_interval = 0.9999 / intervalos
@@ -22,8 +21,6 @@ def fullRandomMethod(n, intervalos):
             if output <= res[item].cota_superior:
                 res[item].frecuencia += 1
                 break
-    for i in range(0,len(res)):
-        res[i] = json.dumps(res[i].__dict__)
     return res
 
 

@@ -1,20 +1,23 @@
-from decimal import Decimal, ROUND_HALF_UP
 
-def multiplicativeMethod(n, x, k, g, intervalos):
-    a = 3 + 8 * k
+def chiMethod(data):
+    lista_chi = []
+    for i in range(0,len(data)):
+        lista_chi.append(Chi(data[i].frecuencia,0,0,0))
+    return lista_chi
+    """ a = 1 + 4 * k
     m = pow(2, g)
     lista_valores = []
     tam_interval = 0.9999 / intervalos
-    cota_sup = 0
+    cota_superior = 0
     res = []
     for i in range(0,intervalos):
-        cota_sup = tam_interval + cota_sup
-        intervalo = Intervalo(i,cota_sup)
+        cota_superior = tam_interval + cota_superior
+        intervalo = Intervalo(i,cota_superior)
         res.append(intervalo)
     if res[-1].cota_superior < 0.9999:
             res[-1].cota_superior = 0.9999
     for i in range(0,n):
-        x = ((a * x ) % m)
+        x = ((a * x + c) % m)
         ran = Decimal(x) / Decimal(m - 1)
 
         output = Decimal(Decimal(ran).quantize(Decimal('.0001'), rounding=ROUND_HALF_UP))
@@ -24,11 +27,13 @@ def multiplicativeMethod(n, x, k, g, intervalos):
             if output <= res[item].cota_superior:
                 res[item].frecuencia += 1
                 break
-    return res
+    for i in range(0,len(res)):
+        res[i] = json.dumps(res[i].__dict__) """
 
 
-class Intervalo:
-  frecuencia = 0
-  def __init__(self, numero_intervalo, cota_superior):
-    self.numero_intervalo = numero_intervalo
-    self.cota_superior = cota_superior
+class Chi:
+  def __init__(self, fo, fe, C, CA):
+    self.fo = fo
+    self.fe = fe
+    self.C = C
+    self.CA = CA

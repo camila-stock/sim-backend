@@ -1,5 +1,4 @@
 from decimal import Decimal, ROUND_HALF_UP
-import json
 
 def linearMethod(n, x, k, c, g, intervalos):
     a = 1 + 4 * k
@@ -25,8 +24,6 @@ def linearMethod(n, x, k, c, g, intervalos):
             if output <= res[item].cota_superior:
                 res[item].frecuencia += 1
                 break
-    for i in range(0,len(res)):
-        res[i] = json.dumps(res[i].__dict__)
     return res
 
 
