@@ -12,12 +12,15 @@ def multiplicativeMethod(n, x, k, g, intervalos):
         cota_sup = tam_interval + cota_sup
         intervalo = Intervalo(i,cota_sup)
         res.append(intervalo)
-
+    if res[-1].cota_superior < 0.9999:
+            res[-1].cota_superior = 0.9999
     for i in range(0,n):
         x = ((a * x ) % m)
         ran = Decimal(x) / Decimal(m - 1)
 
         output = Decimal(Decimal(ran).quantize(Decimal('.0001'), rounding=ROUND_HALF_UP))
+        if output > 0.9999:
+            output = 0.9999
         for item in range(0, len(res)):
             if output <= res[item].cota_superior:
                 res[item].frecuencia += 1
