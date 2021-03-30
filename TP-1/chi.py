@@ -1,8 +1,20 @@
-
 def chiMethod(data):
     lista_chi = []
+    sumatoria = 0
+
+    for i in data:
+        sumatoria = sumatoria + i.frecuencia
+
+    fe = sumatoria / len(data)
+
+    ca = 0
     for i in range(0,len(data)):
-        lista_chi.append(Chi(data[i].frecuencia,0,0,0))
+        print("fe: {}".format(fe))
+        c = pow(float(float(fe) - float(data[i].frecuencia)), 2) / fe
+        print("c: {}".format(c))
+        ca = ca + c
+        print("ca: {}".format(ca))
+        lista_chi.append(Chi(data[i].frecuencia, fe, c,ca))
     return lista_chi
 
 class Chi:
