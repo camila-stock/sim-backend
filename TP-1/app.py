@@ -20,12 +20,12 @@ def getLinear():
     c = int(request.args.get('c'))
     intervalos = int(request.args.get('intervalos'))
     data = cl.linearMethod(n,x,k,c,g, intervalos)
-    chi_data = chi.chiMethod(data)
-    for i in range(0,len(data)):
-        data[i] = json.dumps(data[i].__dict__)
+    chi_data = chi.chiMethod(data['data'])
+    for i in range(0,len(data['data'])):
+        data['data'][i] = json.dumps(data['data'][i].__dict__)
     for i in range(0,len(chi_data)):
         chi_data[i] = json.dumps(chi_data[i].__dict__)
-    return jsonify({'chart': data, 'table': chi_data})
+    return jsonify({'chart': data['data'], 'table': chi_data, 'numbers': data['numbers']})
 
 @app.route('/congruencial-multiplicativo', methods=["GET"])
 @cross_origin()
@@ -36,12 +36,12 @@ def getMultiplicative():
     g = int(request.args.get('g'))
     intervalos = int(request.args.get('intervalos'))
     data = cm.multiplicativeMethod(n,x,k,g, intervalos)
-    chi_data = chi.chiMethod(data)
-    for i in range(0,len(data)):
-        data[i] = json.dumps(data[i].__dict__)
+    chi_data = chi.chiMethod(data['data'])
+    for i in range(0,len(data['data'])):
+        data['data'][i] = json.dumps(data['data'][i].__dict__)
     for i in range(0,len(chi_data)):
         chi_data[i] = json.dumps(chi_data[i].__dict__)
-    return jsonify({'chart': data, 'table': chi_data})
+    return jsonify({'chart': data['data'], 'table': chi_data, 'numbers': data['numbers']})
 
 @app.route('/full-random', methods=["GET"])
 @cross_origin()
@@ -49,12 +49,12 @@ def getRandom():
     n = int(request.args.get('n'))
     intervalos = int(request.args.get('intervalos'))
     data = fr.fullRandomMethod(n, intervalos)
-    chi_data = chi.chiMethod(data)
-    for i in range(0,len(data)):
-        data[i] = json.dumps(data[i].__dict__)
+    chi_data = chi.chiMethod(data['data'])
+    for i in range(0,len(data['data'])):
+        data['data'][i] = json.dumps(data['data'][i].__dict__)
     for i in range(0,len(chi_data)):
         chi_data[i] = json.dumps(chi_data[i].__dict__)
-    return jsonify({'chart': data, 'table': chi_data})
+    return jsonify({'chart': data['data'], 'table': chi_data, 'numbers': data['numbers']})
 
 
 @app.route('/histogram', methods=["GET"])
