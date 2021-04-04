@@ -5,7 +5,8 @@ from flask import request
 import congruencial_lineal as cl  
 import congruencial_multiplicativo as cm  
 import full_random as fr  
-import chi 
+import chi
+import file_writer
 import json
 app = Flask(__name__)
 CORS(app)
@@ -25,6 +26,7 @@ def getLinear():
         data['data'][i] = json.dumps(data['data'][i].__dict__)
     for i in range(0,len(chi_data)):
         chi_data[i] = json.dumps(chi_data[i].__dict__)
+    file_writer.numbers(data['numbers'])
     return jsonify({'chart': data['data'], 'table': chi_data, 'numbers': data['numbers']})
 
 @app.route('/congruencial-multiplicativo', methods=["GET"])
@@ -41,6 +43,7 @@ def getMultiplicative():
         data['data'][i] = json.dumps(data['data'][i].__dict__)
     for i in range(0,len(chi_data)):
         chi_data[i] = json.dumps(chi_data[i].__dict__)
+    file_writer.numbers(data['numbers'])
     return jsonify({'chart': data['data'], 'table': chi_data, 'numbers': data['numbers']})
 
 @app.route('/full-random', methods=["GET"])
@@ -54,6 +57,7 @@ def getRandom():
         data['data'][i] = json.dumps(data['data'][i].__dict__)
     for i in range(0,len(chi_data)):
         chi_data[i] = json.dumps(chi_data[i].__dict__)
+    file_writer.numbers(data['numbers'])
     return jsonify({'chart': data['data'], 'table': chi_data, 'numbers': data['numbers']})
 
 
