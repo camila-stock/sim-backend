@@ -1,9 +1,65 @@
 from flask import Flask
 from flask import jsonify
 from flask_cors import CORS, cross_origin
-
+from flask import request
+import congruencial_lineal as cl  
+import congruencial_multiplicativo as cm  
+import full_random as fr  
+import chi
+import file_writer
+import json
 app = Flask(__name__)
 CORS(app)
+
+@app.route('/congruencial-lineal', methods=["GET"])
+@cross_origin()
+def getLinear():
+    n = int(request.args.get('n'))
+    x = int(request.args.get('x'))
+    k = int(request.args.get('k'))
+    g = int(request.args.get('g'))
+    c = int(request.args.get('c'))
+    intervalos = int(request.args.get('intervalos'))
+    data = cl.linearMethod(n,x,k,c,g, intervalos)
+    chi_data = chi.chiMethod(data['data'])
+    for i in range(0,len(data['data'])):
+        data['data'][i] = json.dumps(data['data'][i].__dict__)
+    for i in range(0,len(chi_data)):
+        chi_data[i] = json.dumps(chi_data[i].__dict__)
+    file_writer.numbers(data['numbers'])
+    return jsonify({'chart': data['data'], 'table': chi_data, 'numbers': data['numbers']})
+
+@app.route('/congruencial-multiplicativo', methods=["GET"])
+@cross_origin()
+def getMultiplicative():
+    n = int(request.args.get('n'))
+    x = int(request.args.get('x'))
+    k = int(request.args.get('k'))
+    g = int(request.args.get('g'))
+    intervalos = int(request.args.get('intervalos'))
+    data = cm.multiplicativeMethod(n,x,k,g, intervalos)
+    chi_data = chi.chiMethod(data['data'])
+    for i in range(0,len(data['data'])):
+        data['data'][i] = json.dumps(data['data'][i].__dict__)
+    for i in range(0,len(chi_data)):
+        chi_data[i] = json.dumps(chi_data[i].__dict__)
+    file_writer.numbers(data['numbers'])
+    return jsonify({'chart': data['data'], 'table': chi_data, 'numbers': data['numbers']})
+
+@app.route('/full-random', methods=["GET"])
+@cross_origin()
+def getRandom():
+    n = int(request.args.get('n'))
+    intervalos = int(request.args.get('intervalos'))
+    data = fr.fullRandomMethod(n, intervalos)
+    chi_data = chi.chiMethod(data['data'])
+    for i in range(0,len(data['data'])):
+        data['data'][i] = json.dumps(data['data'][i].__dict__)
+    for i in range(0,len(chi_data)):
+        chi_data[i] = json.dumps(chi_data[i].__dict__)
+    file_writer.numbers(data['numbers'])
+    return jsonify({'chart': data['data'], 'table': chi_data, 'numbers': data['numbers']})
+
 
 @app.route('/histogram', methods=["GET"])
 @cross_origin()
