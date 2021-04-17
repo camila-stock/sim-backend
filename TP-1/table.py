@@ -7,7 +7,7 @@ def table(data):
 
     fe = sumatoria / len(data)
     for i in range(0,len(data)):
-        lista.append(Table(data[i].cota_superior, data[i].frecuencia, fe))
+        lista.append(Table(data[i-1].cota_superior "-" data[i].cota_superior, data[i].frecuencia, fe))
     return lista
 
 class Table:

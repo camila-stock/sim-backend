@@ -3,26 +3,38 @@ import random
 import math
 
 def exponencial(n, lambd, intervalos):
-    tam_interval = n / intervalos
-    cota_sup = 0
+    minimum = 0
+    maximum = 0
     res = []
     numbers = []
-    for i in range(0, intervalos):
-        cota_sup = tam_interval + cota_sup
-        intervalo = Intervalo(i, cota_sup)
-        res.append(intervalo)
-    if res[-1].cota_superior < n:
-            res[-1].cota_superior = n
+
     for i in range(0, n):
         x = random.uniform(0, 1)
         valor_final = (-1 / lambd) * math.log(1 - x)
         output = Decimal(Decimal(valor_final).quantize(Decimal('.0001'), rounding=ROUND_HALF_UP))
-        numbers.append(float(output))
         if output > n:
             output = n
-        for item in range(0, len(res)):
-            if output <= res[item].cota_superior:
-                res[item].frecuencia += 1
+        
+        if output > maximum:
+            maximum = output
+        
+        if output < minimum:
+            minimum = output
+    
+        numbers.append(float(output))
+    
+    tam_interval = (abs(minimum) + abs(maximum)) / intervalos
+    cota_sup = minimum + tam_interval
+
+    for i in range(0,intervalos):
+        intervalo = Intervalo(i,cota_sup)
+        cota_sup = tam_interval + cota_sup
+        res.append(intervalo)
+
+    for i in range(0, len(numbers)):
+        for j in range(0, len(res)):
+            if numbers[i] <= res[j].cota_superior:
+                res[j].frecuencia += 1
                 break
     response = {
         'data': res,

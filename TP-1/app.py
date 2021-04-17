@@ -41,8 +41,10 @@ def getExponent():
     data = ex.exponencial(n, lambd, intervalos)
     table = t.table(data['data'])
     for i in range(0,len(data['data'])):
+        data['data'][i].cota_superior = str(data['data'][i].cota_superior)
         data['data'][i] = json.dumps(data['data'][i].__dict__)
     for i in range(0,len(table)):
+        table[i].intervalo = str(table[i].intervalo)
         table[i] = json.dumps(table[i].__dict__)
     file_writer.numbers(data['numbers'])
     return jsonify({'chart': data['data'], 'table': table, 'numbers': data['numbers']})
@@ -57,8 +59,10 @@ def getNormal():
     data = nr.normal(n, media, desviacion, intervalos)
     table = t.table(data['data'])
     for i in range(0,len(data['data'])):
+        data['data'][i].cota_superior = str(data['data'][i].cota_superior)
         data['data'][i] = json.dumps(data['data'][i].__dict__)
     for i in range(0,len(table)):
+        table[i].intervalo = str(table[i].intervalo)
         table[i] = json.dumps(table[i].__dict__)
     file_writer.numbers(data['numbers'])
     return jsonify({'chart': data['data'], 'table': table, 'numbers': data['numbers']})
