@@ -4,12 +4,65 @@ from flask_cors import CORS, cross_origin
 from flask import request
 import congruencial_lineal as cl  
 import congruencial_multiplicativo as cm  
-import full_random as fr  
+import full_random as fr
+import exponencial as ex
+import normal as nr
+import uniforme_a_b as unif
 import chi
+import table as t
 import file_writer
 import json
 app = Flask(__name__)
 CORS(app)
+
+
+@app.route('/uniforme-a-b', methods=["GET"])
+@cross_origin()
+def getUniform():
+    a = int(request.args.get('a'))
+    b = int(request.args.get('b'))
+    n = int(request.args.get('n'))
+    intervalos = int(request.args.get('intervalos'))
+    data = unif.uniformAB(n, a, b, intervalos)
+    table = t.table(data['data'])
+    for i in range(0, len(data['data'])):
+        data['data'][i] = json.dumps(data['data'][i].__dict__)
+    for i in range(0,len(table)):
+        table[i] = json.dumps(table[i].__dict__)
+    file_writer.numbers(data['numbers'])
+    return jsonify({'chart': data['data'], 'table': table, 'numbers': data['numbers']})
+
+@app.route('/exponencial', methods=["GET"])
+@cross_origin()
+def getExponent():
+    n = int(request.args.get('n'))
+    lambd = float(request.args.get('lambda'))
+    intervalos = int(request.args.get('intervalos'))
+    data = ex.exponencial(n, lambd, intervalos)
+    table = t.table(data['data'])
+    for i in range(0,len(data['data'])):
+        data['data'][i] = json.dumps(data['data'][i].__dict__)
+    for i in range(0,len(table)):
+        table[i] = json.dumps(table[i].__dict__)
+    file_writer.numbers(data['numbers'])
+    return jsonify({'chart': data['data'], 'table': table, 'numbers': data['numbers']})
+
+@app.route('/normal', methods=["GET"])
+@cross_origin()
+def getNormal():
+    n = int(request.args.get('n'))
+    media = int(request.args.get('media'))
+    desviacion = int(request.args.get('desviacion'))
+    intervalos = int(request.args.get('intervalos'))
+    data = nr.normal(n, media, desviacion, intervalos)
+    table = t.table(data['data'])
+    for i in range(0,len(data['data'])):
+        data['data'][i] = json.dumps(data['data'][i].__dict__)
+    for i in range(0,len(table)):
+        table[i] = json.dumps(table[i].__dict__)
+    file_writer.numbers(data['numbers'])
+    return jsonify({'chart': data['data'], 'table': table, 'numbers': data['numbers']})
+
 
 @app.route('/congruencial-lineal', methods=["GET"])
 @cross_origin()
