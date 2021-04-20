@@ -26,7 +26,7 @@ def tableExponencial(data, lb):
        
     return lista
 
-def tableNormal(data, m, n):
+def tableNormal(data, m, n, d):
     lista = []
     sumatoria = 0
     
@@ -35,8 +35,9 @@ def tableNormal(data, m, n):
         cota_inf = float(round(data[i].cota_inferior,4))
         cota_sup = float(round(data[i].cota_superior,4) )
         mc = cota_sup - cota_inf
-        pcpac = ( 1 - math.exp( - lb * cota_sup   ) ) - ( 1 - math.exp( - lb * cota_inf   ) )
-        fe = mc * pcpac
+        pcpac= (math.exp(-0.5 * math.pow(((mc - m)/d),2 )))/(d * math.sqrt(math.pi * 2 )) * (mc)
+        fe = pcpac * n
+
         lista.append(Table(str(round(data[i].cota_inferior,4)) +" - "+ str(round(data[i].cota_superior,4)), data[i].frecuencia, str(round(fe,4))))
        
     return lista

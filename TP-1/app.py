@@ -61,7 +61,7 @@ def getNormal():
     desviacion = int(request.args.get('desviacion'))
     intervalos = int(request.args.get('intervalos'))
     data = nr.normal(n, media, desviacion, intervalos)
-    table = t.table(data['data'])
+    table = t.tableNormal(data['data'],media, n, desviacion)
     for i in range(0,len(data['data'])):
         data['data'][i].cota_superior = str(round(data['data'][i].cota_superior,4))
         data['data'][i].cota_inferior = str(round(data['data'][i].cota_inferior, 4))
