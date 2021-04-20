@@ -26,8 +26,11 @@ def getUniform():
     data = unif.uniformAB(n, a, b, intervalos)
     table = t.table(data['data'])
     for i in range(0, len(data['data'])):
+        data['data'][i].cota_superior = str(round(data['data'][i].cota_superior, 4))
+        data['data'][i].cota_inferior = str(round(data['data'][i].cota_inferior, 4))
         data['data'][i] = json.dumps(data['data'][i].__dict__)
     for i in range(0,len(table)):
+        table[i].intervalo = str(table[i].intervalo)
         table[i] = json.dumps(table[i].__dict__)
     file_writer.numbers(data['numbers'])
     return jsonify({'chart': data['data'], 'table': table, 'numbers': data['numbers']})
@@ -39,9 +42,10 @@ def getExponent():
     lambd = float(request.args.get('lambda'))
     intervalos = int(request.args.get('intervalos'))
     data = ex.exponencial(n, lambd, intervalos)
-    table = t.table(data['data'])
+    table = t.tableExponencial(data['data'], lambd)
     for i in range(0,len(data['data'])):
-        data['data'][i].cota_superior = str(data['data'][i].cota_superior)
+        data['data'][i].cota_superior = str(round(data['data'][i].cota_superior, 4))
+        data['data'][i].cota_inferior = str(round(data['data'][i].cota_inferior, 4))
         data['data'][i] = json.dumps(data['data'][i].__dict__)
     for i in range(0,len(table)):
         table[i].intervalo = str(table[i].intervalo)
@@ -59,7 +63,8 @@ def getNormal():
     data = nr.normal(n, media, desviacion, intervalos)
     table = t.table(data['data'])
     for i in range(0,len(data['data'])):
-        data['data'][i].cota_superior = str(data['data'][i].cota_superior)
+        data['data'][i].cota_superior = str(round(data['data'][i].cota_superior,4))
+        data['data'][i].cota_inferior = str(round(data['data'][i].cota_inferior, 4))
         data['data'][i] = json.dumps(data['data'][i].__dict__)
     for i in range(0,len(table)):
         table[i].intervalo = str(table[i].intervalo)

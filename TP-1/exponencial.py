@@ -27,9 +27,11 @@ def exponencial(n, lambd, intervalos):
     cota_sup = minimum + tam_interval
 
     for i in range(0,intervalos):
-        intervalo = Intervalo(i,cota_sup)
+        cota_inferior = cota_sup
         cota_sup = tam_interval + cota_sup
+        intervalo = Intervalo(i, cota_sup, cota_inferior)
         res.append(intervalo)
+
 
     for i in range(0, len(numbers)):
         for j in range(0, len(res)):
@@ -45,6 +47,8 @@ def exponencial(n, lambd, intervalos):
 
 class Intervalo:
   frecuencia = 0
-  def __init__(self, numero_intervalo, cota_superior):
+  def __init__(self, numero_intervalo, cota_superior, cota_inferior):
     self.numero_intervalo = numero_intervalo
     self.cota_superior = cota_superior
+    self.cota_inferior = cota_inferior
+

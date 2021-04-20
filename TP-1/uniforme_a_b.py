@@ -7,8 +7,9 @@ def uniformAB(n, a, b, intervalos):
     res = []
     numbers = []
     for i in range(0,intervalos):
+        cota_inferior = cota_sup
         cota_sup = tam_interval + cota_sup
-        intervalo = Intervalo(i, cota_sup)
+        intervalo = Intervalo(i, cota_sup, cota_inferior)
         res.append(intervalo)
 
     if res[-1].cota_superior < b:
@@ -34,6 +35,7 @@ def uniformAB(n, a, b, intervalos):
 
 class Intervalo:
   frecuencia = 0
-  def __init__(self, numero_intervalo, cota_superior):
+  def __init__(self, numero_intervalo, cota_superior, cota_inferior):
     self.numero_intervalo = numero_intervalo
     self.cota_superior = cota_superior
+    self.cota_inferior = cota_inferior
