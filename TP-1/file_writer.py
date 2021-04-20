@@ -15,7 +15,7 @@ def numbers(numbers):
     VALUE = VALUE + 1
     n = open("./numbers/numbers-{}.csv".format(VALUE), "w")
 
-    n.write("Números aleatorios generados" + os.linesep)
+    n.write("Números pseudo - aleatorios generados" + os.linesep)
     for index in numbers:
         n.write(str(index) + os.linesep)
     n.close()
