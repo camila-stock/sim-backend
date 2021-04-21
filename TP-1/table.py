@@ -19,7 +19,7 @@ def tableExponencial(data, lb):
     for i in range (0,len(data)):
         cota_inf = float(round(data[i].cota_inferior,4))
         cota_sup = float(round(data[i].cota_superior,4) )
-        mc = cota_sup - cota_inf
+        mc = (cota_sup + cota_inf) /2
         pcpac = ( 1 - math.exp( - lb * cota_sup   ) ) - ( 1 - math.exp( - lb * cota_inf   ) )
         fe = mc * pcpac
         lista.append(Table(str(round(data[i].cota_inferior,4)) +" - "+ str(round(data[i].cota_superior,4)), data[i].frecuencia, str(round(fe,4))))
@@ -34,10 +34,20 @@ def tableNormal(data, m, n, d):
     for i in range (0,len(data)):
         cota_inf = float(round(data[i].cota_inferior,4))
         cota_sup = float(round(data[i].cota_superior,4) )
-        mc = cota_sup - cota_inf
-        pcpac= (math.exp(-0.5 * math.pow(((mc - m)/d),2 )))/(d * math.sqrt(math.pi * 2 )) * (mc)
-        fe = pcpac * n
+        mc = (cota_sup + cota_inf) /2
+        exponente = (mc - m) / d
+        print("mc: " , mc)
+        print("exponente: " , exponente)
+        exp = math.exp(-0.5 * math.pow(exponente,2))
+        print("exp: " , exp)
+        denominador = d * math.sqrt(math.pi * 2)
+        print("denomidador: " , denominador)
 
+        division = (exp / denominador)
+        pcpac = abs(division * mc)
+
+        print("pcpac: " ,  pcpac)
+        fe = pcpac * n
         lista.append(Table(str(round(data[i].cota_inferior,4)) +" - "+ str(round(data[i].cota_superior,4)), data[i].frecuencia, str(round(fe,4))))
        
     return lista
