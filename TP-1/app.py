@@ -7,6 +7,7 @@ import congruencial_multiplicativo as cm
 import full_random as fr
 import exponencial as ex
 import normal as nr
+import montecarlo as mc
 import uniforme_a_b as unif
 import chi
 import table as t
@@ -14,6 +15,46 @@ import file_writer
 import json
 app = Flask(__name__)
 CORS(app)
+
+@app.route('/montecarlo', methods=["GET"])
+@cross_origin()
+def getMontecarlo():
+    n = int(request.args.get('n'))    
+    probabilidad_venta_mujer = float(request.args.get('probabilidad_venta_mujer'))
+    probabilidad_venta_hombre = float(request.args.get('probabilidad_venta_hombre'))
+    probabilidad_1_subscripcion_mujer = float(request.args.get('probabilidad_1_subscripcion_mujer'))
+    probabilidad_2_subscripcion_mujer = float(request.args.get('probabilidad_2_subscripcion_mujer'))
+    probabilidad_3_subscripcion_mujer = float(request.args.get('probabilidad_3_subscripcion_mujer'))
+    probabilidad_4_subscripcion_mujer = float(request.args.get('probabilidad_4_subscripcion_mujer'))
+    probabilidad_1_subscripcion_hombre = float(request.args.get('probabilidad_1_subscripcion_hombre'))
+    probabilidad_2_subscripcion_hombre = float(request.args.get('probabilidad_2_subscripcion_hombre'))
+    probabilidad_3_subscripcion_hombre = float(request.args.get('probabilidad_3_subscripcion_hombre'))
+    probabilidad_4_subscripcion_hombre = float(request.args.get('probabilidad_4_subscripcion_hombre'))
+    probabilidad_puerta = float(request.args.get('probabilidad_puerta'))
+    probabilidad_puerta_mujer = float(request.args.get('probabilidad_puerta_mujer'))
+    probabilidad_puerta_hombre = float(request.args.get('probabilidad_puerta_hombre'))
+    utilidad_vendedor = float(request.args.get('utilidad_vendedor'))
+    headers = [
+        "n", "prob_puerta", "prob_venta_hombre", "prob_venta_mujer", "sub_hombre_1","sub_hombre_2","sub_hombre_3","sub_hombre_4","sub_mujer_1","sub_mujer_2","sub_mujer_3","sub_mujer_4", "utilidad", "utilidad_total", "subscripciones_total", "prob_venta", "prob_subscripcion"
+    ]
+    row_santi = mc.montecarlo(n,
+        probabilidad_venta_mujer,
+        probabilidad_venta_hombre,
+        probabilidad_1_subscripcion_mujer,
+        probabilidad_2_subscripcion_mujer,
+        probabilidad_3_subscripcion_mujer,
+        probabilidad_4_subscripcion_mujer,
+        probabilidad_1_subscripcion_hombre,
+        probabilidad_2_subscripcion_hombre,
+        probabilidad_3_subscripcion_hombre,
+        probabilidad_4_subscripcion_hombre,
+        probabilidad_puerta,
+        probabilidad_puerta_mujer,
+        probabilidad_puerta_hombre,
+        utilidad_vendedor)
+    file_writer.montecarlo(headers,row_santi)
+    file_writer.montecarloMemoria(headers,row_santi)
+    return jsonify({'res': row_santi})
 
 
 @app.route('/uniforme-a-b', methods=["GET"])
