@@ -27,6 +27,8 @@ share/python-wheels/
 *.egg
 MANIFEST
 numbers/
+montecarlo/
+montecarloMemoria/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

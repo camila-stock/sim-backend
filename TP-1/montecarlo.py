@@ -56,8 +56,9 @@ def montecarlo(n,
                 aux_subscripcion_mujer[j] = probabilidad_subscripcion[0]
                 subscripcion_count += 1
         subscripcion_total += probabilidad_subscripcion[1]
-        prob_subscripcion = (subscripcion_total / (i+1))  * 100 
-        prob_venta = (subscripcion_count / (i+1)) * 100 
+        ##prob_subscripcion = (subscripcion_total / (i+1))  * 100
+        prob_subscripcion = (subscripcion_total / n)
+        prob_venta = (subscripcion_count / (i+1)) * 100
         response.append([i+1, probabilidad_puerta,  aux_venta_hombre, aux_venta_mujer, aux_subscripcion_hombre[0], aux_subscripcion_hombre[1], aux_subscripcion_hombre[2], aux_subscripcion_hombre[3], aux_subscripcion_mujer[0], aux_subscripcion_mujer[1], aux_subscripcion_mujer[2], aux_subscripcion_mujer[3],  utilidad, utilidad_total, subscripcion_total, prob_venta, prob_subscripcion])
     return response
 
