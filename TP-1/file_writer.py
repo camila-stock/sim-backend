@@ -34,10 +34,14 @@ def montecarlo(header, data):
 
     VALUE = VALUE + 1
     n = open("./montecarlo/montecarlo-{}.csv".format(VALUE), "w")
-    
-    n.write(str(header) + os.linesep)
+
+    for i in header:
+        n.write(str(i)  + " , ")
+    n.write(os.linesep)
     for index in data:
-        n.write(str(index) + os.linesep)
+        for index2 in index:
+            n.write(str(index2) + " , ")
+        n.write(os.linesep)
     n.close()
 
 
@@ -46,9 +50,17 @@ def montecarloMemoria(header, data):
 
     VALUE = VALUE + 1
     n = open("./montecarloMemoria/montecarloMemoria-{}.csv".format(VALUE), "w")
-    
-    n.write(str(header) + os.linesep)
-    n.write(str(data[-2]) + os.linesep)
-    n.write(str(data[-1]) + os.linesep)
-    
+
+    for i in header:
+        n.write(str(i) + " , ")
+    n.write(os.linesep)
+
+    for index1 in data[-2]:
+        n.write(str(index1) + " , ")
+    n.write(os.linesep)
+
+    for index2 in data[-1]:
+        n.write(str(index2) + " , ")
+    n.write(os.linesep)
+
     n.close()
