@@ -35,7 +35,7 @@ def getMontecarlo():
     probabilidad_puerta_hombre = float(request.args.get('probabilidad_puerta_hombre'))
     utilidad_vendedor = float(request.args.get('utilidad_vendedor'))
     headers = [
-        "n", "prob_puerta", "prob_venta_hombre", "prob_venta_mujer", "sub_hombre_1","sub_hombre_2","sub_hombre_3","sub_hombre_4","sub_mujer_1","sub_mujer_2","sub_mujer_3","sub_mujer_4", "utilidad", "utilidad_total", "subscripciones_total", "prob_venta", "promedio_suscrib_x_casa"
+        "n", "rnd_puerta", "rnd_venta_hombre", "rnd_venta_mujer", "sub_hombre_1","sub_hombre_2","sub_hombre_3","sub_hombre_4","sub_mujer_1","sub_mujer_2","sub_mujer_3","sub_mujer_4", "utilidad", "utilidad_total", "subscripciones_total", "prob_venta", "promedio_suscrib_x_casa"
     ]
     row_santi = mc.montecarlo(n,
         probabilidad_venta_mujer,
