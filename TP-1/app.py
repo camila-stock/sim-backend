@@ -2,6 +2,7 @@ from flask import Flask
 from flask import jsonify
 from flask_cors import CORS, cross_origin
 from flask import request
+import colas
 import congruencial_lineal as cl  
 import congruencial_multiplicativo as cm  
 import full_random as fr
@@ -15,6 +16,19 @@ import file_writer
 import json
 app = Flask(__name__)
 CORS(app)
+
+
+@app.route('/colas-peluqueria', methods=["GET"])
+@cross_origin()
+def getColasPeluqueria():
+    n = int(request.args.get('n'))
+    tiempo = float(request.args.get('tiempo'))
+    iteraciones = int(request.args.get('iteraciones'))
+    hora_desde = float(request.args.get('hora_desde'))
+    hora_hasta = float(request.args.get('hora_hasta'))
+    fila = colas.colasPeluqueria(n, tiempo, iteraciones, hora_desde, hora_hasta)
+    return jsonify({'res': fila})
+
 
 @app.route('/montecarlo', methods=["GET"])
 @cross_origin()
