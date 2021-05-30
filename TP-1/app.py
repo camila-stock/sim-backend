@@ -26,7 +26,8 @@ def getColasPeluqueria():
     iteraciones = int(request.args.get('iteraciones'))
     hora_desde = float(request.args.get('hora_desde'))
     hora_hasta = float(request.args.get('hora_hasta'))
-    fila = colas.colasPeluqueria(n, tiempo, iteraciones, hora_desde, hora_hasta)
+    #fila = colas.colasPeluqueria(n, tiempo, iteraciones, hora_desde, hora_hasta)
+    fila = colas.colasPeluqueria(n, tiempo)
     return jsonify({'res': fila})
 
 

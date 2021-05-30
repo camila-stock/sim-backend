@@ -7,95 +7,91 @@
 
 import random
 
-def colasPeluqueria(n, tiempo, iteraciones, hora_desde, hora_hasta):
-    evento_anterior_llegada_cliente = Evento("-", 0, 0)
-    demora_actual_aprendiz = Evento("-", 0, 0)
-    demora_actual_veteranoA = Evento("-", 0, 0)
-    demora_actual_veteranoB = Evento("-", 0, 0)
-    peluqueroA = Peluquero(0, 0, 0)
-    peluqueroVa = Peluquero(0, 0, 0)
-    peluqueroVb = Peluquero(0, 0, 0)
+contador_cliente = 0
+peluqueroA = None
+peluqueroVa = None
+peluqueroVb = None
+eventos = []
+reloj = 0
+tiempo_maximo = 0
 
-    fila_anterior = Fila(0, evento_anterior_llegada_cliente, demora_actual_aprendiz, demora_actual_veteranoA,
-                         demora_actual_veteranoB, 0, peluqueroA, peluqueroVa, peluqueroVb)
+def inicio_de_simulacion(hora_evento, horario_cierre):
+    global contador_cliente
+    global peluqueroA
+    global peluqueroVa
+    global peluqueroVb
+    global eventos
+    global tiempo_maximo
+    tiempo_maximo = 60 * horario_cierre
+    peluqueroA = Peluquero("a", "libre", [], 300, 0, "-")
+    peluqueroVa = Peluquero("va", "libre", [], 500, 0, "-")
+    peluqueroVb = Peluquero("vb", "libre", [], 500, 0, "-")
 
+    llegada_cliente = calcularUniformeLlegadaCliente()
+    eventos.append(Evento("llegada_cliente", llegada_cliente))
+    while (len(eventos) != 0):
+        ejecutarEvento(eventos)
+        ordenarEventos()
 
-    if tiempo > fila_anterior.reloj:
-
-        fila_actual = Fila()
-
-        rnd_atenc = random.uniform(0, 1)
-        llega_cliente = calcularUniformeLlegadaCliente(rnd_atenc)
-        atencion = calcularAtencion(llega_cliente)
-
-        prox_lc = llega_cliente + evento_anterior_llegada_cliente.tiempo_demora
-        demora_actual_llegada_cliente = Evento(rnd_atenc, llega_cliente, prox_lc)
-
-        if atencion == "a":
-            if fila_anterior.peluqueroA.estado == 0:
-                peluqueroA = Peluquero(1, 0, 0)
-
-                a = random.uniform(0, 1)
-                unif_a = calcularUniformeVeteranoA(a)
-                prox_a = unif_a + demora_actual_aprendiz.tiempo_demora
-                demora_actual_aprendiz = Evento(a, unif_a, prox_a)
-
-                fila_actual.demoraA = demora_actual_aprendiz
-                fila_actual.peluqueroA = peluqueroA
-
-            ##El resto de los Peluqueros santis, estan al pedo son ñoquis.
-
-        elif atencion == "va":
-            if fila_anterior.peluqueroVa.estado == 0:
-                peluqueroVa = Peluquero(1, 0)
-
-                va = random.uniform(0, 1)
-                unif_va = calcularUniformeVeteranoA(va)
-                prox_va = unif_va + demora_actual_veteranoA.tiempo_demora
-                demora_actual_veteranoA = Evento(va, unif_va, prox_va)
-
-                fila_actual.demoraVa = demora_actual_veteranoA
-                fila_actual.peluqueroVa = peluqueroVa
-
-        elif atencion == "vb":
-            if fila_anterior.peluqueroVb.estado == 0:
-                peluqueroVb = Peluquero(1, 0)
-
-                vb = random.uniform(0, 1)
-                unif_vb = calcularUniformeVeteranoB(vb)
-                prox_vb = unif_vb + demora_actual_veteranoB.tiempo_demora
-                demora_actual_veteranoB = Evento(vb, unif_vb, prox_vb)
-
-                fila_actual.demoraVb = demora_actual_veteranoB
-                fila_actual.peluqueroVb = peluqueroVb
-
-        tiempos = [demora_actual_aprendiz.tiempo_demora, demora_actual_veteranoA.tiempo_demora, demora_actual_veteranoB.tiempo_demora]
-        tiempos.sort(False)
-
-        fila_actual.reloj = tiempos.pop()
-        fila_actual.demoraLc = demora_actual_llegada_cliente
-        fila_actual.demoraA = demora_actual_aprendiz
-        fila_actual.demoraVa = demora_actual_veteranoA
-        fila_actual.demoraVb = demora_actual_veteranoB
-        fila_actual.cantidad_atendidos = 0
-        fila_actual.cantidad_perdidos = 0
-
-    return fila_actual
+def ordenarEventos():
+    aux = None
+    global eventos
+    for i in range(0, len(eventos)):
+        for j in range(0, len(eventos)):
+            if eventos[i].tiempo > eventos[j].tiempo:
+                aux = eventos[i]
+                eventos[i] = eventos[j]
+                eventos[j] = aux
 
 
-def calcularUniformeAbrendiz(rnd):
+
+def ejecutarEvento(eventos):
+    ##### Switch de evento
+    global tiempo_maximo
+    evento = eventos.pop(0)
+    if evento.tipo_evento == "llegada_cliente":
+        if evento.tiempo > tiempo_maximo:
+            return
+        atencion = calcularAtencion()
+        verQueMiercoleHacerConLaAtencionDelChango(atencion)
+        llegada_cliente = calcularUniformeLlegadaCliente()
+        eventos.append(Evento("llegada_cliente", llegada_cliente, "-"))
+
+    elif evento.tipo_evento == "fin_de_atencion":
+        cliente_a_atender = evento.data.cola.pop(0)
+        evento.data.utilidad_acumulada += evento.data.utilidad
+        atender(evento.data, cliente_a_atender)
+
+    elif evento.tipo_evento == "fin_espera_cliente":
+        cliente = evento.data[0]
+        peluquero = evento.data[1]
+        for i in range(0, len(peluquero.cola)):
+            if peluquero.cola[i] == cliente.id:
+                peluquero.cola.pop(i)
+
+
+def calcularUniformeAbrendiz():
+    rnd = random.uniform(0, 1)
     return 20 + (rnd * (30 - 20))
 
-def calcularUniformeVeteranoA(rnd):
+
+def calcularUniformeVeteranoA():
+    rnd = random.uniform(0, 1)
     return 11 + (rnd * (13 - 11))
 
-def calcularUniformeVeteranoB(rnd):
+
+def calcularUniformeVeteranoB():
+    rnd = random.uniform(0, 1)
     return 12 + (rnd * (18 - 12))
 
-def calcularUniformeLlegadaCliente(rnd):
+
+def calcularUniformeLlegadaCliente():
+    rnd = random.uniform(0, 1)
     return 2 + (rnd * (12 - 2))
 
-def calcularAtencion(rnd):
+
+def calcularAtencion():
+    rnd = random.uniform(0, 1)
     if rnd < 0.15:
         return "a"
     elif rnd < 0.45:
@@ -104,46 +100,91 @@ def calcularAtencion(rnd):
         return "vb"
 
 
+def atender(peluquero, cliente):
+    global eventos
+    global reloj
 
-class Fila:
-    def __init__(self, reloj, demoraLc, demoraA, demoraVa, demoraVb, cantidad_atendidos, cantidad_perdidos,
-                  peluqueroA, peluqueroVa, peluqueroVb):
-        self.reloj = reloj
-        self.demoraLc = demoraLc
-        self.demoraA = demoraA
-        self.demoraVa = demoraVa
-        self.demoraVb = demoraVb
-        self.cantidad_atendidos = cantidad_atendidos
-        self.cantidad_perdidos = cantidad_perdidos
-        self.peluqueroA = peluqueroA
-        self.peluqueroVa = peluqueroVa
-        self.peluqueroVb = peluqueroVb
+    if peluquero.estado == "libre":
+        peluquero.estado = "ocupado"
+        peluquero.cliente_atendido = cliente
+
+        tiempo_atencion = 0
+        if peluquero.id == "a":
+            tiempo_atencion = calcularUniformeAbrendiz()
+        elif peluquero.id == "va":
+            tiempo_atencion = calcularUniformeVeteranoA()
+        elif peluquero.id == "vb":
+            tiempo_atencion = calcularUniformeVeteranoB()
+
+        eventos.append(Evento("fin_de_atencion", tiempo_atencion, peluquero))
+
+    elif peluquero.estado == "ocupado":
+        for i in range(0, len(eventos)):
+            if eventos[i].tipo_evento == "fin_espera_cliente" and eventos[i].data[0].id == cliente.id:
+                eventos.pop(i)
+
+        cliente.estado = "esperando"
+        peluquero.cola.append(cliente)
+        tiempo_de_espera_max = reloj + 30
+        eventos.append(Evento("fin_espera_cliente", tiempo_de_espera_max, [cliente, peluquero]))
 
 
+def verQueMiercoleHacerConLaAtencionDelChango(atencion):
+    global reloj
+    global contador_cliente
+    global peluqueroA
+    global peluqueroVa
+    global peluqueroVb
 
-## Evento - Llegada cliente
-##        - fin atención aprendiz
-##        - fin atención veterano A
-##        - fin atención veterano B
+    contador_cliente += 1
+    cliente = Cliente(contador_cliente, "siendo_atendido", reloj)
+
+    if atencion == "a":
+        peluquero = peluqueroA
+    elif atencion == "va":
+        peluquero = peluqueroVa
+    elif atencion == "vb":
+        peluquero = peluqueroVb
+
+    atender(peluquero, cliente)
+
 
 class Evento:
-    def __init__(self, rnd, tiempo_demora, proximo):
-        self.rnd = rnd
-        self.tiempo_demora = tiempo_demora
-        self.proximo = proximo
+    def __init__(self, tipo_evento, tiempo, data):
+        self.tipo_evento = tipo_evento
+        self.tiempo = tiempo
+        self.data = data
 
 
-##TODO
-## Aprendiz + 2 veteranos
 class Peluquero:
-    def __init__(self, estado, cola, utilidad):
+    def __init__(self, id, estado, cola, utilidad, utilidad_acumulada, cliente_atendido):
+        self.id = id
         self.estado = estado
         self.cola = cola
         self.utilidad = utilidad
-
+        self.utilidad_acumulada = utilidad_acumulada
+        self.cliente_atendido = cliente_atendido
 
 
 class Cliente:
-    def __init__(self, estado, cola):
+    def __init__(self, id, estado, hora_llegada):
+        self.id = id
         self.estado = estado
-        self.cola = cola
+        self.hora_llegada = hora_llegada
+
+
+##TODO   imprimir en el excel toda la magia, modificar los parametros de inicio y arreglar el router
+class Fila:
+    def __init__(self, reloj, llegada_cliente, peluquero, peluqueroA, peluqueroVa, peluqueroVb, fin_atencion_aprendiz,
+                 fin_atencion_veterano_a,
+                 fin_atencion_veterano_b, cliente):
+        self.reloj = reloj
+        self.llegada_cliente = llegada_cliente
+        self.peluquero = peluquero
+        self.peluqueroA = peluqueroA
+        self.peluqueroVa = peluqueroVa
+        self.peluqueroVb = peluqueroVb
+        self.fin_atencion_aprendiz = fin_atencion_aprendiz
+        self.fin_atencion_veterano_a = fin_atencion_veterano_a
+        self.fin_atencion_veterano_b = fin_atencion_veterano_b
+        self.cliente = cliente
