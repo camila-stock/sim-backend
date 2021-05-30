@@ -28,17 +28,21 @@ def inicio_de_simulacion(hora_evento, horario_cierre):
     peluqueroVb = Peluquero("vb", "libre", [], 500, 0, "-")
 
     llegada_cliente = calcularUniformeLlegadaCliente()
-    eventos.append(Evento("llegada_cliente", llegada_cliente))
+    eventos.append(Evento("llegada_cliente", llegada_cliente, ""))
+    count = 0
     while (len(eventos) != 0):
         ejecutarEvento(eventos)
         ordenarEventos()
+        count+= 1
+        if count == 100:
+            break
 
 def ordenarEventos():
-    aux = None
+    aux = None ## TODO revisar
     global eventos
     for i in range(0, len(eventos)):
         for j in range(0, len(eventos)):
-            if eventos[i].tiempo > eventos[j].tiempo:
+            if eventos[i].tiempo < eventos[j].tiempo:
                 aux = eventos[i]
                 eventos[i] = eventos[j]
                 eventos[j] = aux
@@ -49,6 +53,7 @@ def ejecutarEvento(eventos):
     ##### Switch de evento
     global tiempo_maximo
     evento = eventos.pop(0)
+    print(evento.tiempo, len(eventos))
     if evento.tipo_evento == "llegada_cliente":
         if evento.tiempo > tiempo_maximo:
             return
@@ -58,9 +63,12 @@ def ejecutarEvento(eventos):
         eventos.append(Evento("llegada_cliente", llegada_cliente, "-"))
 
     elif evento.tipo_evento == "fin_de_atencion":
-        cliente_a_atender = evento.data.cola.pop(0)
+        if len(evento.data.cola) == 0:
+            evento.data.estado = "libre"
+        else:
+            cliente_a_atender = evento.data.cola.pop(0)
+            atender(evento.data, cliente_a_atender)
         evento.data.utilidad_acumulada += evento.data.utilidad
-        atender(evento.data, cliente_a_atender)
 
     elif evento.tipo_evento == "fin_espera_cliente":
         cliente = evento.data[0]
