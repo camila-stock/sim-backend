@@ -47,9 +47,6 @@ def inicio_de_simulacion(hora_evento, horario_cierre):
     while (len(eventos) != 0):
         ejecutarEvento(eventos)
         ordenarEventos()
-        count += 1
-        if count == 100:
-            break
 
 
 def ordenarEventos():
@@ -66,15 +63,17 @@ def ordenarEventos():
 def ejecutarEvento(eventos):
     ##### Switch de evento
     global tiempo_maximo
+    global reloj
     evento = eventos.pop(0)
-    #print(evento.tiempo, len(eventos))
+    reloj = evento.tiempo
     if evento.tipo_evento == "llegada_cliente":
         if evento.tiempo > tiempo_maximo:
             return
         atencion = calcularAtencion()
         verQueMiercoleHacerConLaAtencionDelChango(atencion)
         llegada_cliente = calcularUniformeLlegadaCliente()
-        eventos.append(Evento("llegada_cliente", llegada_cliente, "-"))
+
+        eventos.append(Evento("llegada_cliente", llegada_cliente + reloj, "-"))
 
     elif evento.tipo_evento == "fin_de_atencion":
         if len(evento.data.cola) == 0:
@@ -90,7 +89,6 @@ def ejecutarEvento(eventos):
         for i in range(0, len(peluquero.cola)):
             if peluquero.cola[i] == cliente.id:
                 peluquero.cola.pop(i)
-
 
 def calcularUniformeAbrendiz():
     rnd = random.uniform(0, 1)
@@ -138,15 +136,17 @@ def atender(peluquero, cliente):
         elif peluquero.id == "vb":
             tiempo_atencion = calcularUniformeVeteranoB()
 
-        eventos.append(Evento("fin_de_atencion", tiempo_atencion, peluquero))
+        eventos.append(Evento("fin_de_atencion", tiempo_atencion + reloj, peluquero))
 
     elif peluquero.estado == "ocupado":
-        aux = eventos.copy()
+        aux = []
         for i in range(0, len(eventos)):
             if eventos[i].tipo_evento == "fin_espera_cliente" and eventos[i].data[0].id == cliente.id:
-                aux.pop(i)
-        eventos = aux
-
+                aux.append(i)
+        for j in range(0, len(aux)):
+            for i in range(0, len(eventos)):
+                if aux[j] == i:
+                    eventos.pop(i)
         cliente.estado = "esperando"
         peluquero.cola.append(cliente)
         tiempo_de_espera_max = reloj + 30
