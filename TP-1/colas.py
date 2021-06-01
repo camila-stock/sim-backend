@@ -6,6 +6,7 @@
 ## a los 30' de espera, se van.
 
 import random
+import file_writer as w
 
 contador_cliente = 0
 peluqueroA = None
@@ -26,16 +27,30 @@ def inicio_de_simulacion(hora_evento, horario_cierre):
     peluqueroA = Peluquero("a", "libre", [], 300, 0, "-")
     peluqueroVa = Peluquero("va", "libre", [], 500, 0, "-")
     peluqueroVb = Peluquero("vb", "libre", [], 500, 0, "-")
+    evento_vacio = Evento("-", "-", "-")
+    cliente_vacio = Cliente("-", "-", "-")
 
     llegada_cliente = calcularUniformeLlegadaCliente()
-    eventos.append(Evento("llegada_cliente", llegada_cliente, ""))
+    event = Evento("llegada_cliente", llegada_cliente, "")
+    eventos.append(event)
+
+    pre_header = ["reloj", "llegada_cliente", "", "", "peluquero", "aprendiz", "", "veterano a", "","veterano b", "",]
+    header = ["reloj", "rdn", "tiempo entre llegadas", "prox llegada", "rdn", "peluquero", "cola", "estado", "cola", "estado", "cola", "estado"]
+    w.headers(pre_header)
+    w.headers(header)
+
+##self, reloj, llegada_cliente, peluquero, peluqueroA, peluqueroVa, peluqueroVb, fin_atencion_aprendiz,fin_atencion_veterano_a,fin_atencion_veterano_b, cliente):
+    fila_anterior = Fila(0, event, peluqueroA,  peluqueroVa, peluqueroVb, evento_vacio , evento_vacio, evento_vacio, evento_vacio,cliente_vacio)  ## TODO inicial
+    w.colas(fila_anterior)
+
     count = 0
     while (len(eventos) != 0):
         ejecutarEvento(eventos)
         ordenarEventos()
-        count+= 1
+        count += 1
         if count == 100:
             break
+
 
 def ordenarEventos():
     aux = None ## TODO revisar
@@ -48,12 +63,11 @@ def ordenarEventos():
                 eventos[j] = aux
 
 
-
 def ejecutarEvento(eventos):
     ##### Switch de evento
     global tiempo_maximo
     evento = eventos.pop(0)
-    print(evento.tiempo, len(eventos))
+    #print(evento.tiempo, len(eventos))
     if evento.tipo_evento == "llegada_cliente":
         if evento.tiempo > tiempo_maximo:
             return
@@ -127,9 +141,11 @@ def atender(peluquero, cliente):
         eventos.append(Evento("fin_de_atencion", tiempo_atencion, peluquero))
 
     elif peluquero.estado == "ocupado":
+        aux = eventos.copy()
         for i in range(0, len(eventos)):
             if eventos[i].tipo_evento == "fin_espera_cliente" and eventos[i].data[0].id == cliente.id:
-                eventos.pop(i)
+                aux.pop(i)
+        eventos = aux
 
         cliente.estado = "esperando"
         peluquero.cola.append(cliente)

@@ -18,6 +18,42 @@ if 'montecarloMemoria' in listDir:
     rmtree("./montecarloMemoria")
 os.mkdir("./montecarloMemoria", 0o777)
 
+if 'colas' in listDir:
+    rmtree("./colas")
+os.mkdir("./colas", 0o777)
+
+
+def headers(header):
+    global VALUE
+
+    VALUE = VALUE + 1
+    n = open("./colas/colas-{}.csv".format(VALUE), "w")
+
+    n.write("Peluqueria" + os.linesep)
+    for i in header:
+        n.write(str(i)  + " , ")
+    n.write(os.linesep)
+
+def colas(fila):
+    global VALUE
+    VALUE = VALUE
+    n = open("./colas/colas-{}.csv".format(VALUE), "w")
+
+    aux = []
+    aux.append(fila.reloj)
+    aux.append(fila.llegada_cliente.tipo_evento)
+    aux.append(fila.llegada_cliente.tiempo)
+    aux.append(fila.peluquero.id)
+    aux.append(fila.peluquero.estado)
+    aux.append(fila.peluquero.cola)
+    aux.append(fila.peluquero.utilidad)
+    aux.append(fila.peluquero.utilidad_acumulada)
+    aux.append(fila.peluquero.cliente_atendido)
+
+    for i in aux:
+        n.write(str(i) + " , ")
+    n.write(os.linesep)
+
 def numbers(numbers):
     global VALUE
 
