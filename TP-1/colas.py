@@ -16,6 +16,7 @@ eventos = []
 reloj = 0
 tiempo_maximo = 0
 
+
 def inicio_de_simulacion(hora_evento, horario_cierre):
     global contador_cliente
     global peluqueroA
@@ -34,13 +35,18 @@ def inicio_de_simulacion(hora_evento, horario_cierre):
     event = Evento("llegada_cliente", llegada_cliente, "")
     eventos.append(event)
 
-    pre_header = ["reloj", "llegada_cliente", "", "", "peluquero", "aprendiz", "", "veterano a", "","veterano b", "",]
-    header = ["reloj", "rdn", "tiempo entre llegadas", "prox llegada", "rdn", "peluquero", "cola", "estado", "cola", "estado", "cola", "estado"]
-    w.headers(pre_header)
-    w.headers(header)
+    pre_header = ["reloj", "llegada_cliente", "", "", "peluquero", "aprendiz", "", "", "", "veterano A", "", "", "",
+                  "veterano B", "", "", "", "fin atencion aprendiz", "", "", "fin atencion veterano A", "", "",
+                  "fin atencion veterano B", "", ""]
+    header = ["reloj", "rdn", "tiempo entre llegadas", "prox llegada", "rdn", "peluquero", "cola", "estado", "utilidad",
+              "utilidad acumulada", "cola", "estado", "utilidad", "utilidad acumulada", "cola", "estado", "utilidad",
+              "utilidad acumulada", "rdn", "tiempo atencion", "fin atencion", "rdn", "tiempo atencion", "fin atencion",
+              "rdn", "tiempo atencion", "fin atencion"]
+    headers = [pre_header, header]
+    w.headers(headers)
 
-##self, reloj, llegada_cliente, peluquero, peluqueroA, peluqueroVa, peluqueroVb, fin_atencion_aprendiz,fin_atencion_veterano_a,fin_atencion_veterano_b, cliente):
-    fila_anterior = Fila(0, event, peluqueroA,  peluqueroVa, peluqueroVb, evento_vacio , evento_vacio, evento_vacio, evento_vacio,cliente_vacio)  ## TODO inicial
+    ##self, reloj, llegada_cliente, peluquero, peluqueroA, peluqueroVa, peluqueroVb, fin_atencion_aprendiz,fin_atencion_veterano_a,fin_atencion_veterano_b, cliente):
+    fila_anterior = Fila(0, event, [0, "-"], peluqueroA, peluqueroVa, peluqueroVb, evento_vacio, evento_vacio, evento_vacio, cliente_vacio)
     w.colas(fila_anterior)
 
     count = 0
@@ -53,7 +59,7 @@ def inicio_de_simulacion(hora_evento, horario_cierre):
 
 
 def ordenarEventos():
-    aux = None ## TODO revisar
+    aux = None  ## TODO revisar
     global eventos
     for i in range(0, len(eventos)):
         for j in range(0, len(eventos)):
@@ -67,7 +73,7 @@ def ejecutarEvento(eventos):
     ##### Switch de evento
     global tiempo_maximo
     evento = eventos.pop(0)
-    #print(evento.tiempo, len(eventos))
+    # print(evento.tiempo, len(eventos))
     if evento.tipo_evento == "llegada_cliente":
         if evento.tiempo > tiempo_maximo:
             return

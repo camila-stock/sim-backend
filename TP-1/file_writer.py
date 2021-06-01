@@ -23,32 +23,51 @@ if 'colas' in listDir:
 os.mkdir("./colas", 0o777)
 
 
-def headers(header):
+def headers(data):
     global VALUE
-
-    VALUE = VALUE + 1
+    VALUE
     n = open("./colas/colas-{}.csv".format(VALUE), "w")
 
     n.write("Peluqueria" + os.linesep)
-    for i in header:
-        n.write(str(i)  + " , ")
-    n.write(os.linesep)
+    for index in data:
+        for index2 in index:
+            n.write(str(index2) + " , ")
+        n.write(os.linesep)
+    n.close()
+
 
 def colas(fila):
     global VALUE
     VALUE = VALUE
-    n = open("./colas/colas-{}.csv".format(VALUE), "w")
+    n = open("./colas/colas-{}.csv".format(VALUE), "a")
 
     aux = []
     aux.append(fila.reloj)
     aux.append(fila.llegada_cliente.tipo_evento)
     aux.append(fila.llegada_cliente.tiempo)
-    aux.append(fila.peluquero.id)
-    aux.append(fila.peluquero.estado)
-    aux.append(fila.peluquero.cola)
-    aux.append(fila.peluquero.utilidad)
-    aux.append(fila.peluquero.utilidad_acumulada)
-    aux.append(fila.peluquero.cliente_atendido)
+
+    aux.append(fila.peluquero[0])
+    aux.append(fila.peluquero[1])
+
+    aux.append(fila.peluqueroA.cola)
+    aux.append(fila.peluqueroA.estado)
+    aux.append(fila.peluqueroA.utilidad)
+    aux.append(fila.peluqueroA.utilidad_acumulada)
+
+    aux.append(fila.peluqueroVa.cola)
+    aux.append(fila.peluqueroVa.estado)
+    aux.append(fila.peluqueroVa.utilidad)
+    aux.append(fila.peluqueroVa.utilidad_acumulada)
+
+    aux.append(fila.peluqueroVb.cola)
+    aux.append(fila.peluqueroVb.estado)
+    aux.append(fila.peluqueroVb.utilidad)
+    aux.append(fila.peluqueroVb.utilidad_acumulada)
+
+    aux.append(fila.peluqueroVb.cola)
+    aux.append(fila.peluqueroVb.estado)
+    aux.append(fila.peluqueroVb.utilidad)
+    aux.append(fila.peluqueroVb.utilidad_acumulada)
 
     for i in aux:
         n.write(str(i) + " , ")
