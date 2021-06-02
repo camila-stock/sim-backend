@@ -43,35 +43,40 @@ def colas(fila):
 
     aux = []
     aux.append(fila.reloj)
-    aux.append(fila.llegada_cliente.tipo_evento)
+    aux.append(fila.llegada_cliente.rdn)
     aux.append(fila.llegada_cliente.tiempo)
 
     aux.append(fila.peluquero[0])
     aux.append(fila.peluquero[1])
 
-    aux.append(fila.peluqueroA.cola)
+    aux.append(len(fila.peluqueroA.cola))
     aux.append(fila.peluqueroA.estado)
     aux.append(fila.peluqueroA.utilidad)
     aux.append(fila.peluqueroA.utilidad_acumulada)
 
-    aux.append(fila.peluqueroVa.cola)
+    aux.append(len(fila.peluqueroVa.cola))
     aux.append(fila.peluqueroVa.estado)
     aux.append(fila.peluqueroVa.utilidad)
     aux.append(fila.peluqueroVa.utilidad_acumulada)
 
-    aux.append(fila.peluqueroVb.cola)
+    aux.append(len(fila.peluqueroVb.cola))
     aux.append(fila.peluqueroVb.estado)
     aux.append(fila.peluqueroVb.utilidad)
     aux.append(fila.peluqueroVb.utilidad_acumulada)
 
-    aux.append(fila.peluqueroVb.cola)
-    aux.append(fila.peluqueroVb.estado)
-    aux.append(fila.peluqueroVb.utilidad)
-    aux.append(fila.peluqueroVb.utilidad_acumulada)
+    clientes_aux = fila.peluqueroA.cola + fila.peluqueroVa.cola + fila.peluqueroVb.cola
+    clientes = []
+    for i in clientes_aux:
+        clientes.append(i.id)
+        clientes.append(i.estado)
+        clientes.append(i.hora_llegada)
+
+    aux.append(clientes)
 
     for i in aux:
         n.write(str(i) + " , ")
     n.write(os.linesep)
+
 
 def numbers(numbers):
     global VALUE
