@@ -2,14 +2,131 @@ from flask import Flask
 from flask import jsonify
 from flask_cors import CORS, cross_origin
 from flask import request
+import colas
 import congruencial_lineal as cl  
 import congruencial_multiplicativo as cm  
-import full_random as fr  
+import full_random as fr
+import exponencial as ex
+import normal as nr
+import montecarlo as mc
+import uniforme_a_b as unif
 import chi
+import table as t
 import file_writer
 import json
 app = Flask(__name__)
 CORS(app)
+
+
+@app.route('/colas-peluqueria', methods=["GET"])
+@cross_origin()
+def getColasPeluqueria():
+    #n = int(request.args.get('n'))
+    #tiempo = float(request.args.get('tiempo'))
+    #iteraciones = int(request.args.get('iteraciones'))
+    #hora_desde = float(request.args.get('hora_desde'))
+    #hora_hasta = float(request.args.get('hora_hasta'))
+    fila = colas.inicio_de_simulacion(7, 8)
+    return jsonify({'res': 1})
+
+
+@app.route('/montecarlo', methods=["GET"])
+@cross_origin()
+def getMontecarlo():
+    n = int(request.args.get('n'))    
+    probabilidad_venta_mujer = float(request.args.get('probabilidad_venta_mujer'))
+    probabilidad_venta_hombre = float(request.args.get('probabilidad_venta_hombre'))
+    probabilidad_1_subscripcion_mujer = float(request.args.get('probabilidad_1_subscripcion_mujer'))
+    probabilidad_2_subscripcion_mujer = float(request.args.get('probabilidad_2_subscripcion_mujer'))
+    probabilidad_3_subscripcion_mujer = float(request.args.get('probabilidad_3_subscripcion_mujer'))
+    probabilidad_4_subscripcion_mujer = float(request.args.get('probabilidad_4_subscripcion_mujer'))
+    probabilidad_1_subscripcion_hombre = float(request.args.get('probabilidad_1_subscripcion_hombre'))
+    probabilidad_2_subscripcion_hombre = float(request.args.get('probabilidad_2_subscripcion_hombre'))
+    probabilidad_3_subscripcion_hombre = float(request.args.get('probabilidad_3_subscripcion_hombre'))
+    probabilidad_4_subscripcion_hombre = float(request.args.get('probabilidad_4_subscripcion_hombre'))
+    probabilidad_puerta = float(request.args.get('probabilidad_puerta'))
+    probabilidad_puerta_mujer = float(request.args.get('probabilidad_puerta_mujer'))
+    probabilidad_puerta_hombre = float(request.args.get('probabilidad_puerta_hombre'))
+    utilidad_vendedor = float(request.args.get('utilidad_vendedor'))
+    headers = [
+        "n", "rnd_puerta", "rnd_venta_hombre", "rnd_venta_mujer", "sub_hombre_1","sub_hombre_2","sub_hombre_3","sub_hombre_4","sub_mujer_1","sub_mujer_2","sub_mujer_3","sub_mujer_4", "utilidad", "utilidad_total", "subscripciones_total", "prob_venta", "promedio_suscrib_x_casa"
+    ]
+    row_santi = mc.montecarlo(n,
+        probabilidad_venta_mujer,
+        probabilidad_venta_hombre,
+        probabilidad_1_subscripcion_mujer,
+        probabilidad_2_subscripcion_mujer,
+        probabilidad_3_subscripcion_mujer,
+        probabilidad_4_subscripcion_mujer,
+        probabilidad_1_subscripcion_hombre,
+        probabilidad_2_subscripcion_hombre,
+        probabilidad_3_subscripcion_hombre,
+        probabilidad_4_subscripcion_hombre,
+        probabilidad_puerta,
+        probabilidad_puerta_mujer,
+        probabilidad_puerta_hombre,
+        utilidad_vendedor)
+    file_writer.montecarlo(headers,row_santi)
+    file_writer.montecarloMemoria(headers,row_santi)
+    return jsonify({'res': row_santi})
+
+
+@app.route('/uniforme-a-b', methods=["GET"])
+@cross_origin()
+def getUniform():
+    a = float(request.args.get('a'))
+    b = float(request.args.get('b'))
+    n = int(request.args.get('n'))
+    intervalos = int(request.args.get('intervalos'))
+    data = unif.uniformAB(n, a, b, intervalos)
+    table = t.table(data['data'])
+    for i in range(0, len(data['data'])):
+        data['data'][i].cota_superior = str(round(data['data'][i].cota_superior, 4))
+        data['data'][i].cota_inferior = str(round(data['data'][i].cota_inferior, 4))
+        data['data'][i] = json.dumps(data['data'][i].__dict__)
+    for i in range(0,len(table)):
+        table[i].intervalo = str(table[i].intervalo)
+        table[i] = json.dumps(table[i].__dict__)
+    file_writer.numbers(data['numbers'])
+    return jsonify({'chart': data['data'], 'table': table, 'numbers': data['numbers']})
+
+@app.route('/exponencial', methods=["GET"])
+@cross_origin()
+def getExponent():
+    n = int(request.args.get('n'))
+    lambd = float(request.args.get('lambda'))
+    intervalos = int(request.args.get('intervalos'))
+    data = ex.exponencial(n, lambd, intervalos)
+    table = t.tableExponencial(data['data'], lambd)
+    for i in range(0,len(data['data'])):
+        data['data'][i].cota_superior = str(round(data['data'][i].cota_superior, 4))
+        data['data'][i].cota_inferior = str(round(data['data'][i].cota_inferior, 4))
+        data['data'][i] = json.dumps(data['data'][i].__dict__)
+    for i in range(0,len(table)):
+        table[i].intervalo = str(table[i].intervalo)
+        table[i] = json.dumps(table[i].__dict__)
+    file_writer.numbers(data['numbers'])
+    return jsonify({'chart': data['data'], 'table': table, 'numbers': data['numbers']})
+
+@app.route('/normal', methods=["GET"])
+@cross_origin()
+def getNormal():
+    n = int(request.args.get('n'))
+    media = int(request.args.get('media'))
+    desviacion = int(request.args.get('desviacion'))
+    intervalos = int(request.args.get('intervalos'))
+    data = nr.normal(n, media, desviacion, intervalos)
+    table = t.tableNormal(data['data'],media, n, desviacion)
+    for i in range(0,len(data['data'])):
+        data['data'][i].cota_superior = str(round(data['data'][i].cota_superior,4))
+        data['data'][i].cota_inferior = str(round(data['data'][i].cota_inferior, 4))
+        data['data'][i] = json.dumps(data['data'][i].__dict__)
+    for i in range(0,len(table)):
+        table[i].intervalo = str(table[i].intervalo)
+        table[i] = json.dumps(table[i].__dict__)
+    file_writer.numbers(data['numbers'])
+    return jsonify({'chart': data['data'], 'table': table, 'numbers': data['numbers']})
+
 
 @app.route('/congruencial-lineal', methods=["GET"])
 @cross_origin()
