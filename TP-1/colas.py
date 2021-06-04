@@ -29,15 +29,15 @@ def inicio_de_simulacion(hora_evento, horario_cierre):
     global tiempo_maximo
     global fila_anterior
     global fila_actual
-    fila_anterior = Fila(None, None, None, None, None, None, None, None, None, None, None)
-    fila_actual = Fila(None, None, None, None, None, None, None, None, None, None, None)
+    fila_anterior = Fila(None, None, None, None, None, None, None, None, None, None, None, None)
+    fila_actual = Fila(None, None, None, None, None, None, None, None, None, None, None, None)
     tiempo_maximo = 60 * horario_cierre
     peluqueroA = Peluquero("a", "libre", [], 300, 0, "")
     peluqueroVa = Peluquero("va", "libre", [], 500, 0, "")
     peluqueroVb = Peluquero("vb", "libre", [], 500, 0, "")
     llegada_cliente_vacia = LlegadaCliente("", "", "")
     fin_atencion_vacio = FinDeAtencion("", "", "")
-    evento_vacio = Evento("", "", "", "")
+    fin_espera_cliente = FinEsperaCliente("", "", "")
 
     rnd = random.uniform(0, 1)
     llegada_cliente = 2 + (rnd * (12 - 2))
@@ -46,8 +46,8 @@ def inicio_de_simulacion(hora_evento, horario_cierre):
 
     pre_header = ["reloj", "llegada_cliente", "", "", "peluquero", "","aprendiz", "", "", "", "veterano A", "", "", "",
                   "veterano B", "", "", "", "fin atencion aprendiz", "", "", "fin atencion veterano A", "", "",
-                  "fin atencion veterano B", "", "", "Clientes"]
-    header = ["reloj", "rnd", "tiempo entre llegadas", "próxima llegada", "rnd", "peluquero", "cola", "estado", "utilidad","utilidad acumulada","cola", "estado", "utilidad", "utilidad acumulada", "cola", "estado", "utilidad","utilidad acumulada", "rnd", "tiempo atencion", "fin atencion", "rnd", "tiempo atencion", "fin atencion","rnd", "tiempo atencion", "fin atencion", "estado", "hora_llegada"]
+                  "fin atencion veterano B", "", "", "fin espera cliente", "", "", "Clientes"]
+    header = ["reloj", "rnd", "tiempo entre llegadas", "próxima llegada", "rnd", "peluquero", "cola", "estado", "utilidad","utilidad acumulada","cola", "estado", "utilidad", "utilidad acumulada", "cola", "estado", "utilidad","utilidad acumulada", "rnd", "tiempo atencion", "fin atencion", "rnd", "tiempo atencion", "fin atencion","rnd", "tiempo atencion", "fin atencion", "tiempo de espera maxima", "cliente", "peluquero"]
 
     headers = [pre_header, header]
     w.headers(headers)
@@ -55,13 +55,14 @@ def inicio_de_simulacion(hora_evento, horario_cierre):
     fila_anterior.fila_anterior = fila_anterior
     fila_anterior.reloj = 0
     fila_anterior.llegada_cliente = llegada_cliente_vacia
-    fila_anterior.peluquero = [0, "-"]
+    fila_anterior.peluquero = [0, ""]
     fila_anterior.peluqueroA = peluqueroA
     fila_anterior.peluqueroVa = peluqueroVa
     fila_anterior.peluqueroVb = peluqueroVb
     fila_anterior.fin_atencion_aprendiz = fin_atencion_vacio
     fila_anterior.fin_atencion_veterano_a = fin_atencion_vacio
     fila_anterior.fin_atencion_veterano_b = fin_atencion_vacio
+    fila_anterior.fin_espera_cliente = fin_espera_cliente
     fila_anterior.clientes = []
 
     w.colas(fila_anterior)
@@ -74,8 +75,8 @@ def inicio_de_simulacion(hora_evento, horario_cierre):
     fila_actual.fin_atencion_aprendiz = fin_atencion_vacio
     fila_actual.fin_atencion_veterano_a = fin_atencion_vacio
     fila_actual.fin_atencion_veterano_b = fin_atencion_vacio
+    fila_actual.fin_espera_cliente = fin_espera_cliente
     fila_actual.clientes = []
-
 
     while (len(eventos) != 0):
         ejecutarEvento(eventos)
@@ -83,7 +84,7 @@ def inicio_de_simulacion(hora_evento, horario_cierre):
 
 
 def ordenarEventos():
-    aux = None  ## TODO revisar
+    aux = None
     global eventos
     global fila_actual
     global fila_anterior
@@ -227,6 +228,7 @@ def atender(peluquero, cliente):
         tiempo_de_espera_max = reloj + 30
 
         eventos.append(Evento("fin_espera_cliente", tiempo_de_espera_max, [cliente, peluquero], ""))
+        fila_actual.fin_espera_cliente = FinEsperaCliente(tiempo_de_espera_max, cliente.id, peluquero.id)
 
 
 def verQueMiercoleHacerConLaAtencionDelChango(atencion):
@@ -273,6 +275,12 @@ class FinDeAtencion:
         self.tiempo_atencion = tiempo_atencion
         self.fin_atencion = fin_atencion
 
+class FinEsperaCliente:
+    def __init__(self, tiempo, cliente_id, peluquero_id):
+        self.tiempo = tiempo
+        self.cliente_id = cliente_id
+        self.peluquero_id = peluquero_id
+
 class LlegadaCliente:
     def __init__(self, rnd, tiempo_entre_llegadas, prox_llegada):
         self.rnd = rnd
@@ -290,7 +298,7 @@ class Cliente:
 class Fila:
     def __init__(self, reloj, llegada_cliente, peluquero, peluqueroA, peluqueroVa, peluqueroVb, fin_atencion_aprendiz,
                  fin_atencion_veterano_a,
-                 fin_atencion_veterano_b, clientes, fila_anterior):
+                 fin_atencion_veterano_b, fin_espera_cliente, clientes, fila_anterior):
         self.reloj = reloj
         self.llegada_cliente = llegada_cliente
         self.peluquero = peluquero
@@ -300,5 +308,6 @@ class Fila:
         self.fin_atencion_aprendiz = fin_atencion_aprendiz
         self.fin_atencion_veterano_a = fin_atencion_veterano_a
         self.fin_atencion_veterano_b = fin_atencion_veterano_b
+        self.fin_espera_cliente = fin_espera_cliente
         self.clientes = clientes
         self.fila_anterior = fila_anterior

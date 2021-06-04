@@ -77,6 +77,11 @@ def colas(fila):
     aux.append(fila.fin_atencion_veterano_b.tiempo_atencion)
     aux.append(fila.fin_atencion_veterano_b.fin_atencion)
 
+    if fila.fin_espera_cliente is not None:
+        aux.append(fila.fin_espera_cliente.tiempo)
+        aux.append(fila.fin_espera_cliente.cliente_id)
+        aux.append(fila.fin_espera_cliente.peluquero_id)
+
     clientes_aux = []
     for i in fila.clientes:
         clientes_aux.append(i.id)
@@ -109,7 +114,7 @@ def montecarlo(header, data):
     n = open("./montecarlo/montecarlo-{}.csv".format(VALUE), "w")
 
     for i in header:
-        n.write(str(i)  + " , ")
+        n.write(str(i) + " , ")
     n.write(os.linesep)
     for index in data:
         for index2 in index:
