@@ -29,20 +29,18 @@ def inicio_de_simulacion(hora_evento, horario_cierre):
     global tiempo_maximo
     global fila_anterior
     global fila_actual
-    fila_anterior = Fila(None, None, None, None, None, None, None, None, None, None, None, None)
-    fila_actual = Fila(None, None, None, None, None, None, None, None, None, None, None, None)
+    fila_anterior = Fila(0, None, None, None, None, None, None, None, None, None, None, None)
+    fila_actual = Fila(0, None, None, None, None, None, None, None, None, None, None, None)
     tiempo_maximo = 60 * horario_cierre
     peluqueroA = Peluquero("a", "libre", [], 300, 0, "")
     peluqueroVa = Peluquero("va", "libre", [], 500, 0, "")
     peluqueroVb = Peluquero("vb", "libre", [], 500, 0, "")
-    llegada_cliente_vacia = LlegadaCliente("", "", "")
+    llegada_cliente_vacia = LlegadaCliente(0,0,0)
     fin_atencion_vacio = FinDeAtencion("", "", "")
     fin_espera_cliente = FinEsperaCliente("", "", "")
 
-    rnd = random.uniform(0, 1)
-    llegada_cliente = 2 + (rnd * (12 - 2))
-    event = Evento("llegada_cliente", llegada_cliente, "", llegada_cliente)
-    eventos.append(event)
+    eventos = []
+
 
     pre_header = ["reloj", "llegada_cliente", "", "", "peluquero", "","aprendiz", "", "", "", "veterano A", "", "", "",
                   "veterano B", "", "", "", "fin atencion aprendiz", "", "", "fin atencion veterano A", "", "",
@@ -65,8 +63,6 @@ def inicio_de_simulacion(hora_evento, horario_cierre):
     fila_anterior.fin_espera_cliente = fin_espera_cliente
     fila_anterior.clientes = []
 
-    w.colas(fila_anterior)
-
     fila_actual.peluquero = [0, 0]
     fila_actual.peluqueroA = peluqueroA
     fila_actual.peluqueroVa = peluqueroVa
@@ -77,6 +73,14 @@ def inicio_de_simulacion(hora_evento, horario_cierre):
     fila_actual.fin_atencion_veterano_b = fin_atencion_vacio
     fila_actual.fin_espera_cliente = fin_espera_cliente
     fila_actual.clientes = []
+
+    rnd = random.uniform(0, 1)
+    llegada_cliente = 2 + (rnd * (12 - 2))
+    fila_actual.llegada_cliente = LlegadaCliente(rnd, llegada_cliente, llegada_cliente + reloj)
+    event = Evento("llegada_cliente", llegada_cliente + reloj, "", llegada_cliente)
+    eventos.append(event)
+    ordenarEventos()
+
 
     while (len(eventos) != 0):
         ejecutarEvento(eventos)
@@ -90,7 +94,6 @@ def ordenarEventos():
     global fila_anterior
     global clientes
     for i in range(0, len(eventos)):
-        print(eventos[i])
         for j in range(0, len(eventos)):
             if eventos[i].tiempo < eventos[j].tiempo:
                 aux = eventos[i]
