@@ -37,6 +37,7 @@ def inicio_de_simulacion(x, xi, xf, i, j, demora_aprendiz_cota_inferior, demora_
     global tiempo_maximo
     global fila_anterior
     global fila_actual
+
     global reloj
     global maximo_sillas_requeridas
     global p_atencion_aprendiz
@@ -68,9 +69,9 @@ def inicio_de_simulacion(x, xi, xf, i, j, demora_aprendiz_cota_inferior, demora_
         peluqueroA = Peluquero("a", "libre", [], 300, 0, "")
         peluqueroVa = Peluquero("va", "libre", [], 500, 0, "")
         peluqueroVb = Peluquero("vb", "libre", [], 500, 0, "")
-        llegada_cliente_vacia = LlegadaCliente(0,0,0)
-        fin_atencion_vacio = FinDeAtencion("", "", "")
-        fin_espera_cliente = FinEsperaCliente("", "", "")
+        llegada_cliente_vacia = LlegadaCliente(0, 0, 0)
+        fin_atencion_vacio = FinDeAtencion(0, 0, 0)
+        fin_espera_cliente = FinEsperaCliente(0, 0, 0)
         reloj = 0
 
         eventos = []
@@ -175,6 +176,7 @@ def ejecutarEvento(eventos):
     global clientes
     evento = eventos.pop(0)
     reloj = evento.tiempo
+    c = Cliente("-", "-", "-", "-")
 
     fila_actual.reloj = reloj
 
@@ -197,7 +199,6 @@ def ejecutarEvento(eventos):
         for i in range(0, len(clientes)):
             if clientes[i].id == evento.data.cliente_atendido.id:
                 clientes.pop(i)
-                c = Cliente("-", "-", "-")
                 clientes.insert(i, c)
                 break
         if len(evento.data.cola) == 0:
@@ -216,7 +217,6 @@ def ejecutarEvento(eventos):
         for i in range(0, len(clientes)):
             if clientes[i].id == cliente.id:
                 clientes.pop(i)
-                c = Cliente("-", "-", "-")
                 clientes.insert(i, c)
                 break
 
@@ -313,16 +313,16 @@ def verQueMiercoleHacerConLaAtencionDelChango(atencion):
     global peluqueroVa
     global peluqueroVb
 
-    contador_cliente += 1
-    cliente = Cliente("Cliente " + str(contador_cliente), "siendo_atendido", reloj)
-    clientes.append(cliente)
-
     if atencion == "a":
         peluquero = peluqueroA
     elif atencion == "va":
         peluquero = peluqueroVa
     elif atencion == "vb":
         peluquero = peluqueroVb
+
+    contador_cliente += 1
+    cliente = Cliente("Cliente " + str(contador_cliente), "siendo_atendido", reloj + 30, peluquero.id)
+    clientes.append(cliente)
 
     atender(peluquero, cliente)
 
@@ -363,10 +363,11 @@ class LlegadaCliente:
         self.prox_llegada = prox_llegada
 
 class Cliente:
-    def __init__(self, id, estado, hora_llegada):
+    def __init__(self, id, estado, hora_de_partida, peluquero):
         self.id = id
         self.estado = estado
-        self.hora_llegada = hora_llegada
+        self.hora_de_partida = hora_de_partida
+        self.peluquero = peluquero
 
 
 ##TODO   imprimir en el excel toda la magia, modificar los parametros de inicio y arreglar el router
