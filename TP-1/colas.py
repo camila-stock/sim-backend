@@ -62,8 +62,8 @@ def inicio_de_simulacion(x, xi, xf, i, j, demora_aprendiz_cota_inferior, demora_
     for dia_actual in range(0, x):
         if n > 100000:
             break
-        fila_anterior = Fila(dia_actual, 0, None, None, None, None, None, None, None, None, None, None, maximo_sillas_requeridas, None)
-        fila_actual = Fila(dia_actual, 0, None, None, None, None, None, None, None, None, None, None, maximo_sillas_requeridas, None)
+        fila_anterior = Fila(dia_actual, 0, None, None, None, None, None, None, None, None, None, None, "-", maximo_sillas_requeridas, None)
+        fila_actual = Fila(dia_actual, 0, None, None, None, None, None, None, None, None, None, None, "-", maximo_sillas_requeridas, None)
         tiempo_maximo = 60 * 2
         peluqueroA = Peluquero("a", "libre", [], 300, 0, "")
         peluqueroVa = Peluquero("va", "libre", [], 500, 0, "")
@@ -79,8 +79,8 @@ def inicio_de_simulacion(x, xi, xf, i, j, demora_aprendiz_cota_inferior, demora_
         if dia_actual == 0:
             pre_header = ["dia", "reloj", "llegada_cliente", "", "", "peluquero", "","aprendiz", "", "", "", "veterano A", "", "", "",
                       "veterano B", "", "", "", "fin atencion aprendiz", "", "", "fin atencion veterano A", "", "",
-                      "fin atencion veterano B", "", "", "fin espera cliente", "", "", "Clientes"]
-            header = ["", "reloj", "rnd", "tiempo entre llegadas", "próxima llegada", "rnd", "peluquero", "cola", "estado", "precio_corte","utilidad acumulada","cola", "estado", "utilidad", "utilidad acumulada", "cola", "estado", "utilidad","utilidad acumulada", "rnd", "tiempo atencion", "fin atencion", "rnd", "tiempo atencion", "fin atencion","rnd", "tiempo atencion", "fin atencion", "tiempo de espera maxima", "cliente", "peluquero", "maximo_sillas_requeridas"]
+                      "fin atencion veterano B", "", "", "fin espera cliente", "", "", "Fin dia", "", "Clientes"]
+            header = ["", "reloj", "rnd", "tiempo entre llegadas", "próxima llegada", "rnd", "peluquero", "cola", "estado", "precio_corte","utilidad acumulada","cola", "estado", "utilidad", "utilidad acumulada", "cola", "estado", "utilidad","utilidad acumulada", "rnd", "tiempo atencion", "fin atencion", "rnd", "tiempo atencion", "fin atencion","rnd", "tiempo atencion", "fin atencion", "tiempo de espera maxima", "cliente", "peluquero", "tiempo_fin", "maximo_sillas_requeridas" ]
 
             headers = [pre_header, header]
             w.headers(headers)
@@ -115,7 +115,15 @@ def inicio_de_simulacion(x, xi, xf, i, j, demora_aprendiz_cota_inferior, demora_
         event = Evento("llegada_cliente", llegada_cliente + reloj, "", llegada_cliente)
         eventos.append(event)
         ordenarEventos()
-
+        if (len(fila_actual.peluqueroA.cola) + len(fila_actual.peluqueroVa.cola) + len(fila_actual.peluqueroVb.cola)) > maximo_sillas_requeridas:
+            maximo_sillas_requeridas = len(fila_actual.peluqueroVb.cola)
+        fila_actual.clientes = clientes
+        fila_actual.maximo_sillas_requeridas = maximo_sillas_requeridas
+        fila_actual.fila_anterior = fila_anterior
+        if dia_inicio_impresion <= dia_actual and dia_fin_impresion > dia_actual and hora_inicio_impresion <= reloj:
+            w.colas(fila_actual)
+        fila_anterior = fila_actual
+        n += 1
         while (len(eventos) != 0):
             if n > 100000:
                 break
@@ -130,6 +138,20 @@ def inicio_de_simulacion(x, xi, xf, i, j, demora_aprendiz_cota_inferior, demora_
                 w.colas(fila_actual)
             fila_anterior = fila_actual
             n += 1
+        fin_dia = Fila(dia_actual, reloj, None, None, None, None, None, None, None, None, None, None, reloj, maximo_sillas_requeridas, None)
+        fin_dia.fila_anterior = fila_anterior
+        fin_dia.reloj = 0
+        fin_dia.llegada_cliente = llegada_cliente_vacia
+        fin_dia.peluquero = [0, ""]
+        fin_dia.peluqueroA = peluqueroA
+        fin_dia.peluqueroVa = peluqueroVa
+        fin_dia.peluqueroVb = peluqueroVb
+        fin_dia.fin_atencion_aprendiz = fin_atencion_vacio
+        fin_dia.fin_atencion_veterano_a = fin_atencion_vacio
+        fin_dia.fin_atencion_veterano_b = fin_atencion_vacio
+        fin_dia.fin_espera_cliente = fin_espera_cliente
+        fin_dia.clientes = []
+        w.colas(fin_dia)
 
 
 def ordenarEventos():
@@ -351,7 +373,7 @@ class Cliente:
 class Fila:
     def __init__(self, dia, reloj, llegada_cliente, peluquero, peluqueroA, peluqueroVa, peluqueroVb, fin_atencion_aprendiz,
                  fin_atencion_veterano_a,
-                 fin_atencion_veterano_b, fin_espera_cliente, clientes, maximo_sillas_requeridas, fila_anterior):
+                 fin_atencion_veterano_b, fin_espera_cliente, clientes, fin_dia, maximo_sillas_requeridas, fila_anterior):
         self.dia = dia
         self.reloj = reloj
         self.llegada_cliente = llegada_cliente
@@ -364,5 +386,6 @@ class Fila:
         self.fin_atencion_veterano_b = fin_atencion_veterano_b
         self.fin_espera_cliente = fin_espera_cliente
         self.clientes = clientes
+        self.fin_dia = fin_dia
         self.maximo_sillas_requeridas = maximo_sillas_requeridas
         self.fila_anterior = fila_anterior
