@@ -82,7 +82,10 @@ def colas(fila):
         aux.append(fila.fin_espera_cliente.cliente_id)
         aux.append(fila.fin_espera_cliente.peluquero_id)
 
-    aux.append(fila.fin_dia)
+    if fila.fin_dia != "-":
+        aux.append(round(fila.fin_dia, 2))
+    else:
+        aux.append("-")
     aux.append(fila.maximo_sillas_requeridas)
 
     clientes_aux = []
@@ -91,6 +94,8 @@ def colas(fila):
         clientes_aux.append(i.estado)
         if i.hora_de_partida != "-":
             clientes_aux.append(round(i.hora_de_partida, 2))
+        else:
+            clientes_aux.append("-")
         clientes_aux.append(i.peluquero)
     for i in aux:
         n.write(str(i) + " , ")
