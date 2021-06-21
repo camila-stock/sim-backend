@@ -42,6 +42,7 @@ def colas(fila):
     n = open("./colas/colas-{}.csv".format(VALUE), "a")
 
     aux = []
+    aux.append(fila.dia)
     aux.append(fila.reloj)
     aux.append(fila.llegada_cliente.rnd)
     aux.append(fila.llegada_cliente.tiempo_entre_llegadas)
