@@ -41,6 +41,7 @@ def colas(fila):
     n = open("./colas/colas-{}.csv".format(VALUE), "a")
 
     aux = []
+    aux.append(fila.dia)
     aux.append(round(fila.reloj, 2))
     aux.append(round(fila.llegada_cliente.rnd, 2))
     aux.append(round(fila.llegada_cliente.tiempo_entre_llegadas, 2))
@@ -80,6 +81,8 @@ def colas(fila):
         aux.append(round(fila.fin_espera_cliente.tiempo, 2))
         aux.append(fila.fin_espera_cliente.cliente_id)
         aux.append(fila.fin_espera_cliente.peluquero_id)
+
+    aux.append(fila.maximo_sillas_requeridas)
 
     clientes_aux = []
     for i in fila.clientes:

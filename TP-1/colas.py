@@ -18,9 +18,17 @@ reloj = 0
 tiempo_maximo = 0
 fila_actual = None
 fila_anterior = None
+maximo_sillas_requeridas = 0
+p_atencion_veterano_a = 0
+p_atencion_aprendiz = 0
+demora_a_cota_inferior = 0
+demora_a_cota_superior = 0
+demora_va_cota_inferior = 0
+demora_va_cota_superior = 0
+demora_vb_cota_inferior = 0
+demora_vb_cota_superior = 0
 
-
-def inicio_de_simulacion(hora_evento, horario_cierre):
+def inicio_de_simulacion(x, xi, xf, i, j, demora_aprendiz_cota_inferior, demora_aprendiz_cota_superior, probabilidad_atencion_aprendiz, demora_veterano_a_cota_inferior, demora_veterano_a_cota_superior, probabilidad_atencion_veterano_a, demora_veterano_b_cota_inferior, demora_veterano_b_cota_superior, llegada_cliente_cota_inferior, llegada_cliente_cota_superior):
     global contador_cliente
     global peluqueroA
     global peluqueroVa
@@ -29,62 +37,100 @@ def inicio_de_simulacion(hora_evento, horario_cierre):
     global tiempo_maximo
     global fila_anterior
     global fila_actual
-    fila_anterior = Fila(0, None, None, None, None, None, None, None, None, None, None, None)
-    fila_actual = Fila(0, None, None, None, None, None, None, None, None, None, None, None)
-    tiempo_maximo = 60 * horario_cierre
-    peluqueroA = Peluquero("a", "libre", [], 300, 0, "")
-    peluqueroVa = Peluquero("va", "libre", [], 500, 0, "")
-    peluqueroVb = Peluquero("vb", "libre", [], 500, 0, "")
-    llegada_cliente_vacia = LlegadaCliente(0,0,0)
-    fin_atencion_vacio = FinDeAtencion(0, 0, 0)
-    fin_espera_cliente = FinEsperaCliente(0, 0, 0)
 
-    eventos = []
+    global reloj
+    global maximo_sillas_requeridas
+    global p_atencion_aprendiz
+    global p_atencion_veterano_a
+    global demora_a_cota_inferior
+    global demora_a_cota_superior
+    global demora_va_cota_inferior
+    global demora_va_cota_superior
+    global demora_vb_cota_inferior
+    global demora_vb_cota_superior
+    p_atencion_aprendiz = probabilidad_atencion_aprendiz
+    p_atencion_veterano_a = probabilidad_atencion_veterano_a
+    demora_a_cota_inferior = demora_aprendiz_cota_inferior
+    demora_a_cota_superior = demora_aprendiz_cota_superior
+    demora_va_cota_inferior = demora_veterano_a_cota_inferior
+    demora_va_cota_superior = demora_veterano_a_cota_inferior
+    demora_vb_cota_inferior = demora_veterano_b_cota_inferior
+    demora_vb_cota_superior = demora_veterano_b_cota_inferior
+    n = 0
+    dia_inicio_impresion = xi
+    dia_fin_impresion = xf
+    hora_inicio_impresion = i * 60 + j
+    for dia_actual in range(0, x):
+        if n > 100000:
+            break
+        fila_anterior = Fila(dia_actual, 0, None, None, None, None, None, None, None, None, None, None, maximo_sillas_requeridas, None)
+        fila_actual = Fila(dia_actual, 0, None, None, None, None, None, None, None, None, None, None, maximo_sillas_requeridas, None)
+        tiempo_maximo = 60 * 2
+        peluqueroA = Peluquero("a", "libre", [], 300, 0, "")
+        peluqueroVa = Peluquero("va", "libre", [], 500, 0, "")
+        peluqueroVb = Peluquero("vb", "libre", [], 500, 0, "")
+        llegada_cliente_vacia = LlegadaCliente(0, 0, 0)
+        fin_atencion_vacio = FinDeAtencion(0, 0, 0)
+        fin_espera_cliente = FinEsperaCliente(0, 0, 0)
+        reloj = 0
 
-
-    pre_header = ["reloj", "llegada_cliente", "", "", "peluquero", "","aprendiz", "", "", "", "veterano A", "", "", "",
-                  "veterano B", "", "", "", "fin atencion aprendiz", "", "", "fin atencion veterano A", "", "",
-                  "fin atencion veterano B", "", "", "fin espera cliente", "", "", "Clientes"]
-    header = ["reloj", "rnd", "tiempo entre llegadas", "próxima llegada", "rnd", "peluquero", "cola", "estado", "utilidad","utilidad acumulada","cola", "estado", "utilidad", "utilidad acumulada", "cola", "estado", "utilidad","utilidad acumulada", "rnd", "tiempo atencion", "fin atencion", "rnd", "tiempo atencion", "fin atencion","rnd", "tiempo atencion", "fin atencion", "tiempo de espera maxima", "cliente", "peluquero"]
-
-    headers = [pre_header, header]
-    w.headers(headers)
-
-    fila_anterior.fila_anterior = fila_anterior
-    fila_anterior.reloj = 0
-    fila_anterior.llegada_cliente = llegada_cliente_vacia
-    fila_anterior.peluquero = [0, ""]
-    fila_anterior.peluqueroA = peluqueroA
-    fila_anterior.peluqueroVa = peluqueroVa
-    fila_anterior.peluqueroVb = peluqueroVb
-    fila_anterior.fin_atencion_aprendiz = fin_atencion_vacio
-    fila_anterior.fin_atencion_veterano_a = fin_atencion_vacio
-    fila_anterior.fin_atencion_veterano_b = fin_atencion_vacio
-    fila_anterior.fin_espera_cliente = fin_espera_cliente
-    fila_anterior.clientes = []
-
-    fila_actual.peluquero = [0, 0]
-    fila_actual.peluqueroA = peluqueroA
-    fila_actual.peluqueroVa = peluqueroVa
-    fila_actual.peluqueroVb = peluqueroVb
-    fila_actual.llegada_cliente = llegada_cliente_vacia
-    fila_actual.fin_atencion_aprendiz = fin_atencion_vacio
-    fila_actual.fin_atencion_veterano_a = fin_atencion_vacio
-    fila_actual.fin_atencion_veterano_b = fin_atencion_vacio
-    fila_actual.fin_espera_cliente = fin_espera_cliente
-    fila_actual.clientes = []
-
-    rnd = random.uniform(0, 1)
-    llegada_cliente = 2 + (rnd * (12 - 2))
-    fila_actual.llegada_cliente = LlegadaCliente(rnd, llegada_cliente, llegada_cliente + reloj)
-    event = Evento("llegada_cliente", llegada_cliente + reloj, "", llegada_cliente)
-    eventos.append(event)
-    ordenarEventos()
+        eventos = []
 
 
-    while (len(eventos) != 0):
-        ejecutarEvento(eventos)
+        if dia_actual == 0:
+            pre_header = ["dia", "reloj", "llegada_cliente", "", "", "peluquero", "","aprendiz", "", "", "", "veterano A", "", "", "",
+                      "veterano B", "", "", "", "fin atencion aprendiz", "", "", "fin atencion veterano A", "", "",
+                      "fin atencion veterano B", "", "", "fin espera cliente", "", "", "Clientes"]
+            header = ["", "reloj", "rnd", "tiempo entre llegadas", "próxima llegada", "rnd", "peluquero", "cola", "estado", "precio_corte","utilidad acumulada","cola", "estado", "utilidad", "utilidad acumulada", "cola", "estado", "utilidad","utilidad acumulada", "rnd", "tiempo atencion", "fin atencion", "rnd", "tiempo atencion", "fin atencion","rnd", "tiempo atencion", "fin atencion", "tiempo de espera maxima", "cliente", "peluquero", "maximo_sillas_requeridas"]
+
+            headers = [pre_header, header]
+            w.headers(headers)
+
+        fila_anterior.fila_anterior = fila_anterior
+        fila_anterior.reloj = 0
+        fila_anterior.llegada_cliente = llegada_cliente_vacia
+        fila_anterior.peluquero = [0, ""]
+        fila_anterior.peluqueroA = peluqueroA
+        fila_anterior.peluqueroVa = peluqueroVa
+        fila_anterior.peluqueroVb = peluqueroVb
+        fila_anterior.fin_atencion_aprendiz = fin_atencion_vacio
+        fila_anterior.fin_atencion_veterano_a = fin_atencion_vacio
+        fila_anterior.fin_atencion_veterano_b = fin_atencion_vacio
+        fila_anterior.fin_espera_cliente = fin_espera_cliente
+        fila_anterior.clientes = []
+
+        fila_actual.peluquero = [0, 0]
+        fila_actual.peluqueroA = peluqueroA
+        fila_actual.peluqueroVa = peluqueroVa
+        fila_actual.peluqueroVb = peluqueroVb
+        fila_actual.llegada_cliente = llegada_cliente_vacia
+        fila_actual.fin_atencion_aprendiz = fin_atencion_vacio
+        fila_actual.fin_atencion_veterano_a = fin_atencion_vacio
+        fila_actual.fin_atencion_veterano_b = fin_atencion_vacio
+        fila_actual.fin_espera_cliente = fin_espera_cliente
+        fila_actual.clientes = []
+
+        rnd = random.uniform(0, 1)
+        llegada_cliente = llegada_cliente_cota_inferior + (rnd * (llegada_cliente_cota_superior - llegada_cliente_cota_inferior))
+        fila_actual.llegada_cliente = LlegadaCliente(rnd, llegada_cliente, llegada_cliente + reloj)
+        event = Evento("llegada_cliente", llegada_cliente + reloj, "", llegada_cliente)
+        eventos.append(event)
         ordenarEventos()
+
+        while (len(eventos) != 0):
+            if n > 100000:
+                break
+            ejecutarEvento(eventos)
+            ordenarEventos()
+            if (len(fila_actual.peluqueroA.cola) + len(fila_actual.peluqueroVa.cola) + len(fila_actual.peluqueroVb.cola)) > maximo_sillas_requeridas:
+                maximo_sillas_requeridas = len(fila_actual.peluqueroVb.cola)
+            fila_actual.clientes = clientes
+            fila_actual.maximo_sillas_requeridas = maximo_sillas_requeridas
+            fila_actual.fila_anterior = fila_anterior
+            if dia_inicio_impresion <= dia_actual and dia_fin_impresion > dia_actual and hora_inicio_impresion <= reloj:
+                w.colas(fila_actual)
+            fila_anterior = fila_actual
+            n += 1
 
 
 def ordenarEventos():
@@ -99,11 +145,6 @@ def ordenarEventos():
                 aux = eventos[i]
                 eventos[i] = eventos[j]
                 eventos[j] = aux
-    fila_actual.clientes = clientes
-    fila_actual.fila_anterior = fila_anterior
-    w.colas(fila_actual)
-    fila_anterior = fila_actual
-
 
 def ejecutarEvento(eventos):
     ##### Switch de evento
@@ -160,13 +201,14 @@ def ejecutarEvento(eventos):
 
 def calcularAtencion():
     global fila_actual
-
+    global p_atencion_aprendiz
+    global p_atencion_veterano_a
     rnd = random.uniform(0, 1)
     fila_actual.peluquero[0] = rnd
 
-    if rnd < 0.15:
+    if rnd < p_atencion_aprendiz:
         return "a"
-    elif rnd < 0.45:
+    elif rnd < p_atencion_veterano_a:
         return "va"
     else:
         return "vb"
@@ -177,7 +219,12 @@ def atender(peluquero, cliente):
     global reloj
     global fila_actual
     global clientes
-
+    global demora_a_cota_inferior
+    global demora_a_cota_superior
+    global demora_va_cota_inferior
+    global demora_va_cota_superior
+    global demora_vb_cota_inferior
+    global demora_vb_cota_superior
     if peluquero.estado == "libre":
         peluquero.estado = "ocupado"
         peluquero.cliente_atendido = cliente
@@ -185,7 +232,7 @@ def atender(peluquero, cliente):
         tiempo_atencion = 0
         if peluquero.id == "a":
             rnd = random.uniform(0, 1)
-            tiempo_atencion = 20 + (rnd * (30 - 20))
+            tiempo_atencion = demora_a_cota_inferior + (rnd * (demora_a_cota_superior - demora_a_cota_inferior))
             fila_actual.peluqueroA.estado = peluquero.estado
             fila_actual.peluqueroA.cola = peluquero.cola
             fila_actual.peluqueroA.utilidad = peluquero.utilidad
@@ -196,7 +243,7 @@ def atender(peluquero, cliente):
             fila_actual.fin_atencion_aprendiz.fin_atencion = reloj + tiempo_atencion
         elif peluquero.id == "va":
             rnd = random.uniform(0, 1)
-            tiempo_atencion = 11 + (rnd * (13 - 11))
+            tiempo_atencion = demora_va_cota_inferior + (rnd * (demora_va_cota_superior - demora_va_cota_inferior))
             fila_actual.peluqueroVa.estado = peluquero.estado
             fila_actual.peluqueroVa.cola = peluquero.cola
             fila_actual.peluqueroVa.utilidad = peluquero.utilidad
@@ -207,7 +254,7 @@ def atender(peluquero, cliente):
             fila_actual.fin_atencion_veterano_a.fin_atencion = reloj + tiempo_atencion
         elif peluquero.id == "vb":
             rnd = random.uniform(0, 1)
-            tiempo_atencion = 12 + (rnd * (18 - 12))
+            tiempo_atencion = demora_vb_cota_inferior + (rnd * (demora_vb_cota_superior - demora_vb_cota_inferior))
             fila_actual.peluqueroVb.estado = peluquero.estado
             fila_actual.peluqueroVb.cola = peluquero.cola
             fila_actual.peluqueroVb.utilidad = peluquero.utilidad
@@ -303,9 +350,10 @@ class Cliente:
 
 ##TODO   imprimir en el excel toda la magia, modificar los parametros de inicio y arreglar el router
 class Fila:
-    def __init__(self, reloj, llegada_cliente, peluquero, peluqueroA, peluqueroVa, peluqueroVb, fin_atencion_aprendiz,
+    def __init__(self, dia, reloj, llegada_cliente, peluquero, peluqueroA, peluqueroVa, peluqueroVb, fin_atencion_aprendiz,
                  fin_atencion_veterano_a,
-                 fin_atencion_veterano_b, fin_espera_cliente, clientes, fila_anterior):
+                 fin_atencion_veterano_b, fin_espera_cliente, clientes, maximo_sillas_requeridas, fila_anterior):
+        self.dia = dia
         self.reloj = reloj
         self.llegada_cliente = llegada_cliente
         self.peluquero = peluquero
@@ -317,4 +365,5 @@ class Fila:
         self.fin_atencion_veterano_b = fin_atencion_veterano_b
         self.fin_espera_cliente = fin_espera_cliente
         self.clientes = clientes
+        self.maximo_sillas_requeridas = maximo_sillas_requeridas
         self.fila_anterior = fila_anterior

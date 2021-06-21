@@ -36,17 +36,12 @@ def tableNormal(data, m, n, d):
         cota_sup = float(round(data[i].cota_superior,4) )
         mc = (cota_sup + cota_inf) /2
         exponente = (mc - m) / d
-        print("mc: " , mc)
-        print("exponente: " , exponente)
         exp = math.exp(-0.5 * math.pow(exponente,2))
-        print("exp: " , exp)
         denominador = d * math.sqrt(math.pi * 2)
-        print("denomidador: " , denominador)
 
         division = (exp / denominador)
         pcpac = abs(division * mc)
 
-        print("pcpac: " ,  pcpac)
         fe = pcpac * n
         lista.append(Table(str(round(data[i].cota_inferior,4)) +" - "+ str(round(data[i].cota_superior,4)), data[i].frecuencia, str(round(fe,4))))
        
