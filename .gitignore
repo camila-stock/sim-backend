@@ -29,6 +29,7 @@ MANIFEST
 numbers/
 montecarlo/
 colas/
+colas-euler/
 montecarloMemoria/
 
 # PyInstaller

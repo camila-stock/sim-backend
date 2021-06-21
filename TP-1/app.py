@@ -3,7 +3,8 @@ from flask import jsonify
 from flask_cors import CORS, cross_origin
 from flask import request
 import colas
-import congruencial_lineal as cl  
+import colas_euler
+import congruencial_lineal as cl
 import congruencial_multiplicativo as cm  
 import full_random as fr
 import exponencial as ex
@@ -14,8 +15,28 @@ import chi
 import table as t
 import file_writer
 import json
+import euler
 app = Flask(__name__)
 CORS(app)
+
+@app.route('/colas-peluqueria-euler', methods=["GET"])
+@cross_origin()
+def getColasPeluqueriaEuler():
+    h = float(request.args.get('h'))
+    x = int(request.args.get('x'))
+    xi = int(request.args.get('xi'))
+    xf = int(request.args.get('xf'))
+    i = int(request.args.get('i'))
+    j = int(request.args.get('j'))
+    t_aprendiz = int(request.args.get('t_aprendiz'))
+    probabilidad_atencion_aprendiz = float(request.args.get('probabilidad_atencion_aprendiz'))
+    t_veterano_a = int(request.args.get('t_veterano_a'))
+    probabilidad_atencion_veterano_a = float(request.args.get('probabilidad_atencion_veterano_a'))
+    t_veterano_b = int(request.args.get('t_veterano_b'))
+    llegada_cliente_cota_inferior = int(request.args.get('llegada_cliente_cota_inferior'))
+    llegada_cliente_cota_superior = int(request.args.get('llegada_cliente_cota_superior'))
+    fila = colas_euler.inicio_de_simulacion(h, x, xi, xf, i, j, t_aprendiz, probabilidad_atencion_aprendiz, t_veterano_a, probabilidad_atencion_veterano_a, t_veterano_b, llegada_cliente_cota_inferior, llegada_cliente_cota_superior)
+    return jsonify({'res': 1})
 
 
 @app.route('/colas-peluqueria', methods=["GET"])
@@ -34,8 +55,8 @@ def getColasPeluqueria():
     probabilidad_atencion_veterano_a = float(request.args.get('probabilidad_atencion_veterano_a'))
     demora_veterano_b_cota_inferior = int(request.args.get('demora_veterano_b_cota_inferior'))
     demora_veterano_b_cota_superior = int(request.args.get('demora_veterano_b_cota_superior'))
-    llegada_cliente_cota_inferior = int(request.args.get('demora_veterano_a_cota_inferior'))
-    llegada_cliente_cota_superior = int(request.args.get('demora_veterano_a_cota_superior'))
+    llegada_cliente_cota_inferior = int(request.args.get('llegada_cliente_cota_inferior'))
+    llegada_cliente_cota_superior = int(request.args.get('llegada_cliente_cota_superior'))
 
     fila = colas.inicio_de_simulacion(x, xi, xf, i, j, demora_aprendiz_cota_inferior, demora_aprendiz_cota_superior, probabilidad_atencion_aprendiz, demora_veterano_a_cota_inferior, demora_veterano_a_cota_superior, probabilidad_atencion_veterano_a, demora_veterano_b_cota_inferior, demora_veterano_b_cota_superior, llegada_cliente_cota_inferior, llegada_cliente_cota_superior)
     return jsonify({'res': 1})
