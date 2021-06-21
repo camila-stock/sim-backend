@@ -60,12 +60,12 @@ def inicio_de_simulacion(h, x, xi, xf, i, j, t_aprendiz, probabilidad_atencion_a
             break
         fila_anterior = Fila(dia_actual, 0, None, None, None, None, None, None, None, None, None, None, "-", maximo_sillas_requeridas, None)
         fila_actual = Fila(dia_actual, 0, None, None, None, None, None, None, None, None, None, None, "-", maximo_sillas_requeridas, None)
-        tiempo_maximo = 60 * 2
+        tiempo_maximo = 60 * 8
         peluqueroA = Peluquero("a", "libre", [], 300, 0, "")
         peluqueroVa = Peluquero("va", "libre", [], 500, 0, "")
         peluqueroVb = Peluquero("vb", "libre", [], 500, 0, "")
         llegada_cliente_vacia = LlegadaCliente(0, 0, 0)
-        fin_atencion_vacio = FinDeAtencion(0, 0, 0, 0)
+        fin_atencion_vacio = FinDeAtencion(0, 0, 0)
         fin_espera_cliente = FinEsperaCliente(0, 0, 0)
         reloj = 0
 
@@ -74,9 +74,9 @@ def inicio_de_simulacion(h, x, xi, xf, i, j, t_aprendiz, probabilidad_atencion_a
 
         if dia_actual == 0:
             pre_header = ["dia", "reloj", "llegada_cliente", "", "", "peluquero", "","aprendiz", "", "", "", "veterano A", "", "", "",
-                      "veterano B", "", "", "", "fin atencion aprendiz", "", "","", "fin atencion veterano A", "","", "",
-                      "fin atencion veterano B", "", "","", "fin espera cliente", "", "", "Fin dia", "", "Clientes"]
-            header = ["", "reloj", "rnd", "tiempo entre llegadas", "próxima llegada", "rnd", "peluquero", "cola", "estado", "precio_corte","utilidad acumulada","cola", "estado", "utilidad", "utilidad acumulada", "cola", "estado", "utilidad","utilidad acumulada", "rnd", "T", "tiempo atencion", "fin atencion", "rnd","T", "tiempo atencion", "fin atencion","rnd","T", "tiempo atencion", "fin atencion", "tiempo de espera maxima", "cliente", "peluquero", "tiempo_fin", "maximo_sillas_requeridas" ]
+                      "veterano B", "", "", "", "fin atencion aprendiz", "","", "fin atencion veterano A", "", "",
+                      "fin atencion veterano B", "", "", "fin espera cliente", "", "", "Fin dia", "", "Clientes"]
+            header = ["", "reloj", "rnd", "tiempo entre llegadas", "próxima llegada", "rnd", "peluquero", "cola", "estado", "precio_corte","utilidad acumulada","cola", "estado", "utilidad", "utilidad acumulada", "cola", "estado", "utilidad","utilidad acumulada", "derivada", "duracion atencion", "fin atencion", "derivada", "tiempo atencion", "fin atencion","derivada", "tiempo atencion", "fin atencion", "tiempo de espera maxima", "cliente", "peluquero", "tiempo_fin", "maximo_sillas_requeridas" ]
 
             headers = [pre_header, header]
             w.headers(headers)
@@ -177,6 +177,7 @@ def ejecutarEvento(eventos):
 
     if evento.tipo_evento == "llegada_cliente":
         if evento.tiempo > tiempo_maximo:
+            print(evento.tiempo)
             return
         atencion = calcularAtencion()
         fila_actual.peluquero[1] = atencion
@@ -243,46 +244,41 @@ def atender(peluquero, cliente):
     if peluquero.estado == "libre":
         peluquero.estado = "ocupado"
         peluquero.cliente_atendido = cliente
+        cliente.estado = "siendo_atendido"
         T = "-"
 
         tiempo_atencion = 0
         if peluquero.id == "a":
-            rnd = random.uniform(0, 1)
-            T = euler.colas_euler(len(fila_actual.peluqueroA.cola), t_a, h_santi, rnd) ## llamar a lo de euler
-            tiempo_atencion = fila_actual.reloj + T
-            fila_actual.peluqueroA.estado = peluquero.estado
-            fila_actual.peluqueroA.cola = peluquero.cola
-            fila_actual.peluqueroA.utilidad = peluquero.utilidad
-            fila_actual.peluqueroA.utilidad_acumulada = peluquero.utilidad_acumulada
-
-            fila_actual.fin_atencion_aprendiz.rnd = rnd
-            fila_actual.fin_atencion_aprendiz.T = T
-            fila_actual.fin_atencion_aprendiz.tiempo_atencion = tiempo_atencion
-            fila_actual.fin_atencion_aprendiz.fin_atencion = reloj + tiempo_atencion
-        elif peluquero.id == "va":
-            rnd = random.uniform(0, 1)
-            T = euler.colas_euler(len(fila_actual.peluqueroVa.cola), t_va, h_santi, rnd) ## llamar a lo de euler
-            tiempo_atencion = fila_actual.reloj + T
+            T = euler.colas_euler(fila_actual.peluqueroA.cliente_atendido, fila_actual.reloj, fila_actual.fin_atencion_aprendiz.fin_atencion, t_a, len(fila_actual.peluqueroA.cola), h_santi) ## llamar a lo de euler
+            tiempo_atencion = T.D_1
             fila_actual.peluqueroVa.estado = peluquero.estado
             fila_actual.peluqueroVa.cola = peluquero.cola
             fila_actual.peluqueroVa.utilidad = peluquero.utilidad
             fila_actual.peluqueroVa.utilidad_acumulada = peluquero.utilidad_acumulada
 
-            fila_actual.fin_atencion_veterano_a.rnd = rnd
-            fila_actual.fin_atencion_veterano_a.T = T
+            fila_actual.fin_atencion_veterano_a.derivada = T.dD_dt
+            fila_actual.fin_atencion_veterano_a.tiempo_atencion = tiempo_atencion
+            fila_actual.fin_atencion_veterano_a.fin_atencion = reloj + tiempo_atencion
+        elif peluquero.id == "va":
+            T = euler.colas_euler(fila_actual.peluqueroVa.cliente_atendido, fila_actual.reloj, fila_actual.fin_atencion_veterano_a.fin_atencion, t_va, len(fila_actual.peluqueroVa.cola), h_santi) ## llamar a lo de euler
+            tiempo_atencion = T.D_1
+            fila_actual.peluqueroVa.estado = peluquero.estado
+            fila_actual.peluqueroVa.cola = peluquero.cola
+            fila_actual.peluqueroVa.utilidad = peluquero.utilidad
+            fila_actual.peluqueroVa.utilidad_acumulada = peluquero.utilidad_acumulada
+
+            fila_actual.fin_atencion_veterano_a.derivada = T.dD_dt
             fila_actual.fin_atencion_veterano_a.tiempo_atencion = tiempo_atencion
             fila_actual.fin_atencion_veterano_a.fin_atencion = reloj + tiempo_atencion
         elif peluquero.id == "vb":
-            rnd = random.uniform(0, 1)
-            T = euler.colas_euler(len(fila_actual.peluqueroVb.cola), t_vb, h_santi, rnd) ## llamar a lo de euler
-            tiempo_atencion = fila_actual.reloj + T
+            T = euler.colas_euler(fila_actual.peluqueroVb.cliente_atendido ,fila_actual.reloj, fila_actual.fin_atencion_veterano_b.fin_atencion, t_vb, len(fila_actual.peluqueroVb.cola), h_santi) ## llamar a lo de euler
+            tiempo_atencion = T.D_1
             fila_actual.peluqueroVb.estado = peluquero.estado
             fila_actual.peluqueroVb.cola = peluquero.cola
             fila_actual.peluqueroVb.utilidad = peluquero.utilidad
             fila_actual.peluqueroVb.utilidad_acumulada = peluquero.utilidad_acumulada
 
-            fila_actual.fin_atencion_veterano_b.rnd = rnd
-            fila_actual.fin_atencion_veterano_b.T = T
+            fila_actual.fin_atencion_veterano_b.derivada = T.dD_dt
             fila_actual.fin_atencion_veterano_b.tiempo_atencion = tiempo_atencion
             fila_actual.fin_atencion_veterano_b.fin_atencion = reloj + tiempo_atencion
 
@@ -345,9 +341,8 @@ class Peluquero:
         self.cliente_atendido = cliente_atendido
 
 class FinDeAtencion:
-    def __init__(self, rnd, T, tiempo_atencion, fin_atencion):
-        self.rnd = rnd
-        self.T = T
+    def __init__(self, derivada, tiempo_atencion, fin_atencion):
+        self.derivada = derivada
         self.tiempo_atencion = tiempo_atencion
         self.fin_atencion = fin_atencion
 

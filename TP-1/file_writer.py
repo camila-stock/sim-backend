@@ -136,18 +136,15 @@ def colas_euler(fila):
     aux.append(fila.peluqueroVb.utilidad)
     aux.append(fila.peluqueroVb.utilidad_acumulada)
 
-    aux.append(round(fila.fin_atencion_aprendiz.rnd, 2))
-    aux.append(round(fila.fin_atencion_aprendiz.T, 2))
+    aux.append(round(fila.fin_atencion_aprendiz.derivada, 2))
     aux.append(round(fila.fin_atencion_aprendiz.tiempo_atencion, 2))
     aux.append(round(fila.fin_atencion_aprendiz.fin_atencion, 2))
 
-    aux.append(round(fila.fin_atencion_veterano_a.rnd, 2))
-    aux.append(round(fila.fin_atencion_veterano_a.T, 2))
+    aux.append(round(fila.fin_atencion_veterano_a.derivada, 2))
     aux.append(round(fila.fin_atencion_veterano_a.tiempo_atencion, 2))
     aux.append(round(fila.fin_atencion_veterano_a.fin_atencion, 2))
 
-    aux.append(round(fila.fin_atencion_veterano_b.rnd, 2))
-    aux.append(round(fila.fin_atencion_veterano_b.T, 2))
+    aux.append(round(fila.fin_atencion_veterano_b.derivada, 2))
     aux.append(round(fila.fin_atencion_veterano_b.tiempo_atencion, 2))
     aux.append(round(fila.fin_atencion_veterano_b.fin_atencion, 2))
 
