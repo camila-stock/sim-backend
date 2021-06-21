@@ -83,6 +83,8 @@ def colas(fila):
         aux.append(fila.fin_espera_cliente.cliente_id)
         aux.append(fila.fin_espera_cliente.peluquero_id)
 
+    aux.append(fila.maximo_sillas_requeridas)
+
     clientes_aux = []
     for i in fila.clientes:
         clientes_aux.append(i.id)

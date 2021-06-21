@@ -121,17 +121,14 @@ def inicio_de_simulacion(x, xi, xf, i, j, demora_aprendiz_cota_inferior, demora_
                 break
             ejecutarEvento(eventos)
             ordenarEventos()
+            if (len(fila_actual.peluqueroA.cola) + len(fila_actual.peluqueroVa.cola) + len(fila_actual.peluqueroVb.cola)) > maximo_sillas_requeridas:
+                maximo_sillas_requeridas = len(fila_actual.peluqueroVb.cola)
             fila_actual.clientes = clientes
+            fila_actual.maximo_sillas_requeridas = maximo_sillas_requeridas
             fila_actual.fila_anterior = fila_anterior
             if dia_inicio_impresion <= dia_actual and dia_fin_impresion > dia_actual and hora_inicio_impresion <= reloj:
                 w.colas(fila_actual)
             fila_anterior = fila_actual
-            if len(fila_actual.peluqueroA.cola) > maximo_sillas_requeridas:
-                maximo_sillas_requeridas = len(fila_actual.peluqueroA.cola)
-            if len(fila_actual.peluqueroVa.cola) > maximo_sillas_requeridas:
-                maximo_sillas_requeridas = len(fila_actual.peluqueroVa.cola)
-            if len(fila_actual.peluqueroVb.cola) > maximo_sillas_requeridas:
-                maximo_sillas_requeridas = len(fila_actual.peluqueroVb.cola)
             n += 1
 
 
