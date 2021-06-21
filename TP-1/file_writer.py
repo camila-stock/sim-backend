@@ -1,4 +1,3 @@
-import csv
 import os
 from shutil import rmtree
 
@@ -42,12 +41,12 @@ def colas(fila):
     n = open("./colas/colas-{}.csv".format(VALUE), "a")
 
     aux = []
-    aux.append(fila.reloj)
-    aux.append(fila.llegada_cliente.rnd)
-    aux.append(fila.llegada_cliente.tiempo_entre_llegadas)
-    aux.append(fila.llegada_cliente.prox_llegada)
+    aux.append(round(fila.reloj, 2))
+    aux.append(round(fila.llegada_cliente.rnd, 2))
+    aux.append(round(fila.llegada_cliente.tiempo_entre_llegadas, 2))
+    aux.append(round(fila.llegada_cliente.prox_llegada, 2))
 
-    aux.append(fila.peluquero[0])
+    aux.append(round(fila.peluquero[0], 2))
     aux.append(fila.peluquero[1])
 
     aux.append(len(fila.peluqueroA.cola))
@@ -65,20 +64,20 @@ def colas(fila):
     aux.append(fila.peluqueroVb.utilidad)
     aux.append(fila.peluqueroVb.utilidad_acumulada)
 
-    aux.append(fila.fin_atencion_aprendiz.rnd)
-    aux.append(fila.fin_atencion_aprendiz.tiempo_atencion)
-    aux.append(fila.fin_atencion_aprendiz.fin_atencion)
+    aux.append(round(fila.fin_atencion_aprendiz.rnd, 2))
+    aux.append(round(fila.fin_atencion_aprendiz.tiempo_atencion, 2))
+    aux.append(round(fila.fin_atencion_aprendiz.fin_atencion, 2))
 
-    aux.append(fila.fin_atencion_veterano_a.rnd)
-    aux.append(fila.fin_atencion_veterano_a.tiempo_atencion)
-    aux.append(fila.fin_atencion_veterano_a.fin_atencion)
+    aux.append(round(fila.fin_atencion_veterano_a.rnd, 2))
+    aux.append(round(fila.fin_atencion_veterano_a.tiempo_atencion, 2))
+    aux.append(round(fila.fin_atencion_veterano_a.fin_atencion, 2))
 
-    aux.append(fila.fin_atencion_veterano_b.rnd)
-    aux.append(fila.fin_atencion_veterano_b.tiempo_atencion)
-    aux.append(fila.fin_atencion_veterano_b.fin_atencion)
+    aux.append(round(fila.fin_atencion_veterano_b.rnd, 2))
+    aux.append(round(fila.fin_atencion_veterano_b.tiempo_atencion, 2))
+    aux.append(round(fila.fin_atencion_veterano_b.fin_atencion, 2))
 
     if fila.fin_espera_cliente is not None:
-        aux.append(fila.fin_espera_cliente.tiempo)
+        aux.append(round(fila.fin_espera_cliente.tiempo, 2))
         aux.append(fila.fin_espera_cliente.cliente_id)
         aux.append(fila.fin_espera_cliente.peluquero_id)
 
@@ -86,8 +85,9 @@ def colas(fila):
     for i in fila.clientes:
         clientes_aux.append(i.id)
         clientes_aux.append(i.estado)
-        clientes_aux.append(i.hora_llegada)
-
+        if i.hora_de_partida != "-":
+            clientes_aux.append(round(i.hora_de_partida, 2))
+        clientes_aux.append(i.peluquero)
     for i in aux:
         n.write(str(i) + " , ")
     for i in clientes_aux:
