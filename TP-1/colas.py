@@ -147,6 +147,8 @@ def ejecutarEvento(eventos):
         for i in range(0, len(clientes)):
             if clientes[i].id == evento.data.cliente_atendido.id:
                 clientes.pop(i)
+                c = Cliente("-", "-", "-")
+                clientes.insert(i, c)
                 break
         if len(evento.data.cola) == 0:
             evento.data.estado = "libre"
@@ -164,6 +166,8 @@ def ejecutarEvento(eventos):
         for i in range(0, len(clientes)):
             if clientes[i].id == cliente.id:
                 clientes.pop(i)
+                c = Cliente("-", "-", "-")
+                clientes.insert(i, c)
                 break
 
 
