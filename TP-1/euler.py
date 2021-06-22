@@ -10,8 +10,6 @@ os.mkdir("./colas-euler", 0o777)
 
 def colas_euler(cliente, to, do, T, c, h):
     fila_anterior = FilaColaEuler("", "", "", 0, 0)
-    impresar(fila_anterior)
-
     derivada = c + 0.2 * T + to
     fila_siguiente = FilaColaEuler(to, do, derivada, to + h,
                                    to + h * derivada)
