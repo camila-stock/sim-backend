@@ -9,7 +9,6 @@ os.mkdir("./colas-euler", 0o777)
 
 
 def colas_euler(cliente, to, do, T, c, h):
-    inicializacion()
     fila_anterior = FilaColaEuler("", "", "", 0, 0)
     impresar(fila_anterior)
 
@@ -18,8 +17,6 @@ def colas_euler(cliente, to, do, T, c, h):
                                    to + h * derivada)
     fila_anterior = fila_siguiente
     impresar(fila_siguiente)
-
-    resumen([])
 
     return fila_anterior
 
@@ -35,26 +32,8 @@ class FilaColaEuler:
 def inicializacion():
     n = open("./colas-euler/colas-euler-{}.csv".format(VALUE), "w")
 
-    headers = ["to", "To", "dT_dt", "t_1", "T_1"]
+    headers = ["to", "Do", "dD_dt", "t_1", "D_1"]
     for index in headers:
-        n.write(str(index) + ", ")
-    n.write(os.linesep)
-    n.close()
-
-
-def ini_resumen():
-    n = open("./colas-euler/resumen.csv", "w")
-
-    headers = ["cliente", "T", "?"]
-    for index in headers:
-        n.write(str(index) + ", ")
-    n.write(os.linesep)
-    n.close()
-
-
-def resumen(aux):
-    n = open("./colas-euler/resumen.csv", "a")
-    for index in aux:
         n.write(str(index) + ", ")
     n.write(os.linesep)
     n.close()

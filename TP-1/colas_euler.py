@@ -55,6 +55,7 @@ def inicio_de_simulacion(h, x, xi, xf, i, j, t_aprendiz, probabilidad_atencion_a
     dia_inicio_impresion = xi
     dia_fin_impresion = xf
     hora_inicio_impresion = i * 60 + j
+    euler.inicializacion()
     for dia_actual in range(0, x):
         if n > 100000:
             break
@@ -177,7 +178,6 @@ def ejecutarEvento(eventos):
 
     if evento.tipo_evento == "llegada_cliente":
         if evento.tiempo > tiempo_maximo:
-            print(evento.tiempo)
             return
         atencion = calcularAtencion()
         fila_actual.peluquero[1] = atencion
